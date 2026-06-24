@@ -172,7 +172,6 @@
           <select id="roleSelector" class="theme-inner border theme-border theme-text text-xs rounded-lg px-3 py-1.5 focus:ring-1 focus:ring-brandGreen focus:outline-none font-semibold cursor-pointer">
             <option value="Admin">Admin</option>
             <option value="Sales">Sales</option>
-            <option value="Warehouse">Warehouse</option>
             <option value="Management">Read-Only</option>
           </select>
         </div>
@@ -199,7 +198,7 @@
       </div>
 
       <button id="quickUpdateBtn" onclick="openUpdateModal()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg active:scale-95">
-        <i class="fa-solid fa-square-plus text-sm"></i> บันทึกรายการ
+        <i class="fa-solid fa-square-plus text-sm"></i> Save
       </button>
     </div>
   </nav>
@@ -336,7 +335,7 @@
         </div>
         <div id="noTransactionsToday" class="hidden text-center py-8 theme-text-muted text-xs flex flex-col items-center gap-2">
           <i class="fa-regular fa-folder-open text-3xl"></i>
-          <span>ยังไม่มีรายการคลังบันทึกในวันนี้ คุณสามารถเพิ่มได้ผ่านปุ่ม "บันทึกธุรกรรมสินค้า" ด้านบน</span>
+          <span>ยังไม่มีรายการเข้า-ออกบันทึกในวันนี้จ้า... </span>
         </div>
       </div>
 
@@ -346,8 +345,8 @@
     <div id="view-history" class="space-y-6 hidden">
       <div class="theme-card border rounded-2xl p-6 shadow-xl space-y-6">
         <div>
-          <h2 class="text-base font-bold theme-text">ประวัติการเคลื่อนไหวสินค้า</h2>
-          <p class="text-xs theme-text-muted">ตัวกรองและประวัติคลังรายวันและรายเดือน</p>
+          <h2 class="text-base font-bold theme-text">Stock Movement History</h2>
+          <p class="text-xs theme-text-muted">Filters</p>
         </div>
 
         <!-- Filters Engine Panel -->
@@ -356,39 +355,39 @@
           <div>
             <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">ช่วงเวลา</label>
             <div class="flex gap-1.5">
-              <button onclick="setHistoryTimeframe('daily')" id="timeframe-daily" class="flex-1 bg-brandGreen text-slate-950 font-bold text-[10px] uppercase py-1.5 rounded transition-all">รายวัน</button>
-              <button onclick="setHistoryTimeframe('monthly')" id="timeframe-monthly" class="flex-1 theme-card border theme-border theme-text-muted font-bold text-[10px] uppercase py-1.5 rounded transition-all">รายเดือน</button>
+              <button onclick="setHistoryTimeframe('daily')" id="timeframe-daily" class="flex-1 bg-brandGreen text-slate-950 font-bold text-[10px] uppercase py-1.5 rounded transition-all">Daily</button>
+              <button onclick="setHistoryTimeframe('monthly')" id="timeframe-monthly" class="flex-1 theme-card border theme-border theme-text-muted font-bold text-[10px] uppercase py-1.5 rounded transition-all">Monthly</button>
             </div>
           </div>
           <!-- Product Selector -->
           <div>
             <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">สินค้า</label>
             <select id="filterProduct" class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
-              <option value="ALL">สินค้าทั้งหมด</option>
+              <option value="ALL">Total Products</option>
             </select>
           </div>
           <!-- Warehouse Selector -->
           <div>
             <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">คลังสินค้า</label>
             <select id="filterWarehouse" class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
-              <option value="ALL">คลังสินค้าทั้งหมด</option>
+              <option value="ALL">All Warehouses</option>
             </select>
           </div>
           <!-- Action Type -->
           <div>
             <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">กรองประเภทธุรกรรม</label>
             <select id="filterAction" class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
-              <option value="ALL">ทั้งหมด</option>
-              <option value="IN">นำเข้า (IN)</option>
-              <option value="OUT">เบิกออก (OUT)</option>
-              <option value="RESERVE">จองสินค้า (RESERVE)</option>
-              <option value="EXTERNAL">ภายนอก (EXT SUPPLY)</option>
-              <option value="Brought Forward">ยอดยกมา (BEGINNING)</option>
+              <option value="ALL">ALL</option>
+              <option value="IN">Stock IN</option>
+              <option value="OUT">Stock OUT</option>
+              <option value="RESERVE">RESERVE</option>
+              <option value="EXTERNAL">EXT SUPPLY</option>
+              <option value="Brought Forward">Brought Forward</option>
             </select>
           </div>
           <!-- Customer Input -->
           <div>
-            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">ค้นหาลูกค้า/ซัพพลายเออร์</label>
+            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">Type customer or supplier name...</label>
             <input type="text" id="filterCustomer" placeholder="พิมพ์ชื่อค้นหา..." class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
           </div>
         </div>
@@ -396,12 +395,12 @@
         <!-- Custom Search Date Row -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 theme-inner p-3 rounded-lg border theme-border">
           <div class="flex items-center gap-2">
-            <span class="text-xs theme-text-muted">การค้น:</span>
+            <span class="text-xs theme-text-muted">Search:</span>
             <input type="date" id="filterSpecificDate" class="theme-card border theme-border text-xs theme-text rounded p-1 focus:outline-none">
-            <button onclick="clearSpecificDateFilter()" class="text-xs theme-text-muted hover:text-white underline">ล้างตัวกรองวันที่</button>
+            <button onclick="clearSpecificDateFilter()" class="text-xs theme-text-muted hover:text-white underline">Clear Date Filter</button>
           </div>
           <button onclick="applyHistoryFilters()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition-all">
-            <i class="fa-solid fa-filter"></i> ค้นหาด้วยตัวกรอง
+            <i class="fa-solid fa-filter"></i> Filter Search
           </button>
         </div>
 
@@ -429,7 +428,7 @@
         </div>
         <div id="noHistoryResults" class="hidden text-center py-8 theme-text-muted text-xs flex flex-col items-center gap-2">
           <i class="fa-solid fa-magnifying-glass text-3xl"></i>
-          <span>ไม่พบประวัติคลังสินค้าที่ตรงกับเงื่อนไขการค้นหานี้</span>
+          <span>No results found for the selected filters.</span>
         </div>
       </div>
     </div>
@@ -439,8 +438,8 @@
       <div class="theme-card border rounded-2xl p-6 shadow-xl space-y-6">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h2 class="text-base font-bold theme-text">แคตตาล็อกสินค้าโซลาร์เซลล์หลัก (Master Setup)</h2>
-            <p class="text-xs theme-text-muted">ตั้งค่าโมเดล ยี่ห้อ และจำนวนวัตต์แผงโซลาร์เซลล์ที่ใช้เดินระบบทั้งหมด</p>
+            <h2 class="text-base font-bold theme-text">Solar Product Catalog</h2>
+            <p class="text-xs theme-text-muted">Configure Solar Panel Models, Brands, and Wattage Ratings</p>
           </div>
           <button id="addProductBtn" onclick="openProductModal()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition-all">
             <i class="fa-solid fa-plus"></i> Add New Product
@@ -472,10 +471,10 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h2 class="text-base font-bold theme-text">Warehouse Setup</h2>
-            <p class="text-xs theme-text-muted">สถานที่จัดเก็บสต็อกสินค้าตามคลังจัดส่งหลัก</p>
+            <p class="text-xs theme-text-muted">Storage Locations</p>
           </div>
           <button id="addWarehouseBtn" onclick="openWarehouseModal()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition-all">
-            <i class="fa-solid fa-plus"></i> ลงทะเบียนจุดคลังสินค้าใหม่
+            <i class="fa-solid fa-plus"></i> Add New Storage Location
           </button>
         </div>
 
@@ -504,9 +503,9 @@
       <div class="theme-inner px-6 py-4 border-b theme-border flex justify-between items-center">
         <div>
           <h3 class="text-sm font-bold theme-text flex items-center gap-2">
-            <i class="fa-solid fa-right-left text-brandGreen"></i> บันทึกข้อมูลคลังสินค้าแบบด่วน (Quick Transaction)
+            <i class="fa-solid fa-right-left text-brandGreen"></i> Quick Inventory Transaction
           </h3>
-          <p class="text-xs theme-text-muted">บันทึกธุรกรรมการเข้าคลัง ออกคลัง การจอง หรือรับเข้าจากพาร์ทเนอร์ภายนอก (External Supply)</p>
+          <p class="text-xs theme-text-muted">Record Warehouse In-Out, Reservation, and External Supply</p>
         </div>
         <button onclick="closeUpdateModal()" class="theme-text-muted hover:text-white transition-all">
           <i class="fa-solid fa-xmark text-lg"></i>
@@ -518,15 +517,15 @@
           
           <!-- Action Type Selector (เปลี่ยนเป็น 5 ตัวเลือกที่ครอบคลุมยอดยกมาต้นเดือน) -->
           <div class="col-span-2">
-            <label class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">เลือกประเภทธุรกรรมคลังสินค้า *</label>
+            <label class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">Select Warehouse Transaction Type *</label>
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
               <label id="action-in-label" class="flex flex-col items-center justify-center gap-1 border theme-border theme-inner p-3 rounded-lg text-xs font-semibold cursor-pointer hover:border-brandGreen/60 transition-all theme-text">
                 <input type="radio" name="actionType" value="IN" checked onclick="adjustModalFormForAction('IN')" class="accent-brandGreen">
-                <span class="text-brandGreen font-bold text-center"><i class="fa-solid fa-circle-down"></i> IN (รับเข้า)</span>
+                <span class="text-brandGreen font-bold text-center"><i class="fa-solid fa-circle-down"></i> STOCK IN </span>
               </label>
               <label id="action-out-label" class="flex flex-col items-center justify-center gap-1 border theme-border theme-inner p-3 rounded-lg text-xs font-semibold cursor-pointer hover:border-brandRed/60 transition-all theme-text">
                 <input type="radio" name="actionType" value="OUT" onclick="adjustModalFormForAction('OUT')" class="accent-brandRed">
-                <span class="text-brandRed font-bold text-center"><i class="fa-solid fa-circle-up"></i> OUT (เบิก)</span>
+                <span class="text-brandRed font-bold text-center"><i class="fa-solid fa-circle-up"></i> STOCK OUT </span>
               </label>
               <label id="action-reserve-label" class="flex flex-col items-center justify-center gap-1 border theme-border theme-inner p-3 rounded-lg text-xs font-semibold cursor-pointer hover:border-brandOrange/60 transition-all theme-text">
                 <input type="radio" name="actionType" value="RESERVE" onclick="adjustModalFormForAction('RESERVE')" class="accent-brandOrange">
@@ -539,14 +538,14 @@
               <!-- ตัวเลือกสำหรับการลงบันทึกยอดยกมาจากต้นเดือนโดยตรง -->
               <label id="action-beginning-label" class="flex flex-col items-center justify-center gap-1 border theme-border theme-inner p-3 rounded-lg text-xs font-semibold cursor-pointer hover:border-brandPurple/60 transition-all theme-text col-span-2 sm:col-span-1">
                 <input type="radio" name="actionType" value="BEGINNING" onclick="adjustModalFormForAction('BEGINNING')" class="accent-brandPurple">
-                <span class="text-brandPurple font-bold text-center"><i class="fa-solid fa-calendar-check"></i> BEGINNING</span>
+                <span class="text-brandPurple font-bold text-center"><i class="fa-solid fa-calendar-check"></i> Brought Forward</span>
               </label>
             </div>
           </div>
 
           <!-- Product Selector -->
           <div>
-            <label for="txnProduct" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">เลือกโมเดลสินค้าแผงโซลาร์เซลล์ *</label>
+            <label for="txnProduct" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Select Solar Panel Product Model *</label>
             <select id="txnProduct" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
               <!-- Dynamically populated -->
             </select>
@@ -554,7 +553,7 @@
 
           <!-- Warehouse Selector -->
           <div>
-            <label for="txnWarehouse" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">คลังสินค้าปลายทาง/รับเก็บ *</label>
+            <label for="txnWarehouse" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Receiving Warehouse *</label>
             <select id="txnWarehouse" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
               <!-- Dynamically populated -->
             </select>
@@ -562,37 +561,37 @@
 
           <!-- Quantity -->
           <div>
-            <label for="txnQuantity" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">จำนวนแผงสินค้าที่ทำรายการ *</label>
+            <label for="txnQuantity" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Quantity *</label>
             <input type="number" id="txnQuantity" required min="1" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="ระบุตัวเลขจำนวน">
           </div>
 
           <!-- Date & Time -->
           <div>
-            <label for="txnDateTime" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">วันและเวลาที่ทำกิจกรรม *</label>
+            <label for="txnDateTime" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Date & Time *</label>
             <input type="datetime-local" id="txnDateTime" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
           </div>
 
           <!-- Customer or Supplier Name -->
           <div>
-            <label for="txnCustomer" id="labelTxnCustomer" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">ชื่อโครงการลูกค้า/บริษัทผู้ซื้อ</label>
+            <label for="txnCustomer" id="labelTxnCustomer" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Buyer Name</label>
             <input type="text" id="txnCustomer" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="ระบุรายละเอียด">
           </div>
 
           <!-- DO / Reference Number -->
           <div>
-            <label for="txnDo" id="labelTxnDo" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">หมายเลขเอกสารอ้างอิง DO / Invoice No.</label>
+            <label for="txnDo" id="labelTxnDo" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1"> DO No.</label>
             <input type="text" id="txnDo" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น DO-998822">
           </div>
 
           <!-- Responsible Person -->
           <div>
-            <label for="txnResponsible" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">ชื่อเจ้าหน้าที่ผู้ดำเนินการบันทึก *</label>
+            <label for="txnResponsible" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Recorded By *</label>
             <input type="text" id="txnResponsible" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น นายสมชาย ปฏิบัติหน้าที่">
           </div>
 
           <!-- Status Selector -->
           <div>
-            <label for="txnStatus" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">สถานะประมวลผลธุรกรรม *</label>
+            <label for="txnStatus" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Status *</label>
             <select id="txnStatus" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
               <option value="Completed" selected>Completed</option>
               <option value="Pending">Pending</option>
@@ -604,15 +603,15 @@
 
           <!-- Remarks -->
           <div class="col-span-2">
-            <label for="txnRemark" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">คำอธิบายเพิ่มเติม / รายละเอียดสินค้าเพิ่มเติม</label>
-            <textarea id="txnRemark" rows="2" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="บันทึกข้อสังเกตเพิ่มเติม เช่น เกณฑ์การตรวจรับ ข้อมูลคลังภายนอก หรือสัญญารับซื้อเพิ่มเติม"></textarea>
+            <label for="txnRemark" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">คNotes</label>
+            <textarea id="txnRemark" rows="2" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="Additional Notes & Details"></textarea>
           </div>
         </div>
 
         <div class="border-t theme-border pt-4 mt-6 flex justify-end gap-3">
-          <button type="button" onclick="closeUpdateModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">ยกเลิก</button>
+          <button type="button" onclick="closeUpdateModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">Cancel</button>
           <button type="submit" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all flex items-center gap-1.5 shadow-md">
-            <i class="fa-solid fa-floppy-disk"></i> บันทึก & ประมวลสต็อกทันที
+            <i class="fa-solid fa-floppy-disk"></i> Save & Update Stock
           </button>
         </div>
       </form>
@@ -623,24 +622,24 @@
   <div id="logoEditModal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
     <div class="theme-card border rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
       <div class="theme-inner px-6 py-4 border-b theme-border flex justify-between items-center">
-        <h3 class="text-sm font-bold theme-text">ตั้งค่าโลโก้แบรนด์พาร์ทเนอร์ (SolarStock Logo Changer)</h3>
+        <h3 class="text-sm font-bold theme-text">SolarStock Logo Changer</h3>
         <button onclick="closeLogoEditModal()" class="theme-text-muted hover:text-white transition-all">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
       <div class="p-6 space-y-4">
-        <p class="text-xs theme-text-muted">คุณสามารถวางลิงก์ URL ของภาพแบรนด์หรือบริษัทเพื่ออัปเดตโลโก้มุมซ้ายบน โดยระบบจะทำการบันทึกและซิงก์ผลลัพธ์ผ่านคลังข้อมูลเรียลไทม์ทันที</p>
+        <p class="text-xs theme-text-muted">วางลิงก์ URL ของภาพแบรนด์หรือบริษัทเพื่ออัปเดตโลโก้มุมซ้ายบน </p>
         <div>
-          <label for="brandLogoUrlInput" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">วางที่อยู่รูปภาพ (Image URL)</label>
+          <label for="brandLogoUrlInput" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">Image URL</label>
           <input type="url" id="brandLogoUrlInput" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น https://images.unsplash.com/photo-1509391366360-2e959784a276?w=100">
         </div>
         <div class="flex justify-between items-center text-xs theme-text-muted pt-2">
           <span>หรือใช้แบบดั้งเดิม:</span>
-          <button onclick="resetLogoToFallback()" class="text-brandGreen font-bold underline hover:text-emerald-400">ล้างข้อมูลเป็นไอคอนแผงโซลาร์</button>
+          <button onclick="resetLogoToFallback()" class="text-brandGreen font-bold underline hover:text-emerald-400">Default</button>
         </div>
         <div class="border-t theme-border pt-4 flex justify-end gap-3">
-          <button onclick="closeLogoEditModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">ยกเลิก</button>
-          <button onclick="applyLogoUrlChange()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">บันทึก & ซิงก์เรียลไทม์</button>
+          <button onclick="closeLogoEditModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">Cancel</button>
+          <button onclick="applyLogoUrlChange()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">Save</button>
         </div>
       </div>
     </div>
@@ -650,7 +649,7 @@
   <div id="productModal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
     <div class="theme-card border rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
       <div class="theme-inner px-6 py-4 border-b theme-border flex justify-between items-center">
-        <h3 id="productModalTitle" class="text-sm font-bold theme-text">เพิ่มแคตตาล็อกแผงโซลาร์เซลล์หลัก</h3>
+        <h3 id="productModalTitle" class="text-sm font-bold theme-text">ADD NEW PRODUCT</h3>
         <button onclick="closeProductModal()" class="theme-text-muted hover:text-white transition-all">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
@@ -658,24 +657,24 @@
       <form id="productForm" onsubmit="handleProductSubmit(event)" class="p-6 space-y-4">
         <input type="hidden" id="editProductId">
         <div>
-          <label for="prodBrand" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">ชื่อยี่ห้อ (Brand) *</label>
+          <label for="prodBrand" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Brand *</label>
           <input type="text" id="prodBrand" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น JinkoSolar">
         </div>
         <div>
-          <label for="prodModel" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">รหัสโมเดลโรงงาน (Model) *</label>
+          <label for="prodModel" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Model *</label>
           <input type="text" id="prodModel" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น JKM435N-54HL4R-V">
         </div>
         <div>
-          <label for="prodWattage" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">ขนาดกำลังไฟแผง (วัตต์) *</label>
+          <label for="prodWattage" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Watt *</label>
           <input type="number" id="prodWattage" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น 435">
         </div>
         <div>
-          <label for="prodCode" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">รหัสย่อสำหรับออกบิล SKU *</label>
+          <label for="prodCode" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">SKU/CODE *</label>
           <input type="text" id="prodCode" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น JINKO-435-TN">
         </div>
         <div class="border-t theme-border pt-4 mt-6 flex justify-end gap-3">
-          <button type="button" onclick="closeProductModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">ยกเลิก</button>
-          <button type="submit" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">บันทึกข้อมูลหลัก</button>
+          <button type="button" onclick="closeProductModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">Cancel</button>
+          <button type="submit" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">Save Record</button>
         </div>
       </form>
     </div>
@@ -685,7 +684,7 @@
   <div id="warehouseModal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
     <div class="theme-card border rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
       <div class="theme-inner px-6 py-4 border-b theme-border flex justify-between items-center">
-        <h3 id="warehouseModalTitle" class="text-sm font-bold theme-text">เพิ่มสถานที่จัดเก็บสินค้าคลังย่อย</h3>
+        <h3 id="warehouseModalTitle" class="text-sm font-bold theme-text">Add Sub-Warehouse Storage</h3>
         <button onclick="closeWarehouseModal()" class="theme-text-muted hover:text-white transition-all">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
@@ -693,12 +692,12 @@
       <form id="warehouseForm" onsubmit="handleWarehouseSubmit(event)" class="p-6 space-y-4">
         <input type="hidden" id="editWarehouseId">
         <div>
-          <label for="whName" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">ชื่อเรียกสถานที่คลังสินค้า *</label>
-          <input type="text" id="whName" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น คลังกรุงเทพ พระราม 3">
+          <label for="whName" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Warehouse Name *</label>
+          <input type="text" id="whName" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="Location: Bangkok,Chonburi">
         </div>
         <div class="border-t theme-border pt-4 mt-6 flex justify-end gap-3">
-          <button type="button" onclick="closeWarehouseModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">ยกเลิก</button>
-          <button type="submit" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">ลงทะเบียนคลัง</button>
+          <button type="button" onclick="closeWarehouseModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">Cancel</button>
+          <button type="submit" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">Add Warehouse</button>
         </div>
       </form>
     </div>
@@ -708,16 +707,16 @@
   <div id="statusChangeModal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
     <div class="theme-card border rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
       <div class="theme-inner px-6 py-4 border-b theme-border flex justify-between items-center">
-        <h3 class="text-sm font-bold theme-text">ปรับปรุงเปลี่ยนสถานะ</h3>
+        <h3 class="text-sm font-bold theme-text">Change Status</h3>
         <button onclick="closeStatusChangeModal()" class="text-slate-400 hover:text-white transition-all">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
       <div class="p-6 space-y-4">
         <input type="hidden" id="statusChangeTxnId">
-        <p class="text-xs theme-text-muted">กำหนดขั้นตอนประมวลสต็อกใหม่ของยอดจองหรือรายการจัดส่งนี้:</p>
+        <p class="text-xs theme-text-muted">Reprocess Stock:</p>
         <div>
-          <label for="newStatusVal" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">อัปเดตเป็นสถานะ</label>
+          <label for="newStatusVal" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">Update Status</label>
           <select id="newStatusVal" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
             <option value="Completed">Completed</option>
             <option value="Pending">Pending</option>
@@ -727,8 +726,8 @@
           </select>
         </div>
         <div class="border-t theme-border pt-4 flex justify-end gap-3">
-          <button onclick="closeStatusChangeModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">ยกเลิก</button>
-          <button onclick="applyStatusChange()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">ยืนยันและอัปเดตเรียลไทม์</button>
+          <button onclick="closeStatusChangeModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">Cancel</button>
+          <button onclick="applyStatusChange()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">Confirm & Update</button>
         </div>
       </div>
     </div>
@@ -1105,7 +1104,7 @@
       });
 
       await batch.commit();
-      showToast("จัดเตรียมทำเนียบระบบคลังข้อมูลเสร็จสิ้น!", "success");
+      showToast("Warehouse Data Setup Completed!", "success");
     };
 
     // ----------------------------------------------------
@@ -1121,8 +1120,8 @@
 
       txnProductSelect.innerHTML = '';
       txnWarehouseSelect.innerHTML = '';
-      filterProductSelect.innerHTML = '<option value="ALL">สินค้าทั้งหมด</option>';
-      filterWarehouseSelect.innerHTML = '<option value="ALL">คลังสินค้าทั้งหมด</option>';
+      filterProductSelect.innerHTML = '<option value="ALL">All Products</option>';
+      filterWarehouseSelect.innerHTML = '<option value="ALL">All Warehouses</option>';
 
       products.forEach(p => {
         const optionText = `${p.brand} - ${p.model} (${p.code}) [${p.wattage}W]`;
@@ -1268,7 +1267,7 @@
                 <i class="fa-solid fa-warehouse text-brandGreen"></i> ${wh.name}
               </h4>
               <span class="text-[10px] theme-text font-bold theme-card border theme-border px-2.5 py-1 rounded-full uppercase">
-                ${matchedProducts.length} โมเดลสินค้า
+                ${matchedProducts.length} items
               </span>
             </div>
             <div class="p-4 space-y-3">
@@ -1281,11 +1280,11 @@
           const availableStock = prodStats.currentStock - prodStats.reservedStock;
 
           let badgeColor = 'text-brandGreen bg-brandGreen/10 border-brandGreen/20';
-          let quantityText = `${availableStock} แผ่นพร้อมขาย`;
+          let quantityText = `${availableStock} Available Stock`;
           
           if (availableStock <= 0) {
             badgeColor = 'text-brandRed bg-brandRed/10 border-brandRed/20';
-            quantityText = `แผงหมดคลัง (Out of Stock)`;
+            quantityText = `Out of Stock`;
           } else if (prodStats.reservedStock > 0) {
             badgeColor = 'text-brandOrange bg-brandOrange/10 border-brandOrange/20';
           }
@@ -1304,9 +1303,9 @@
                   ${quantityText}
                 </span>
                 <div class="text-[10px] theme-text-muted mt-1 space-x-2 flex items-center justify-end flex-wrap gap-1">
-                  <span>ยอดยกมา: <strong class="theme-text font-semibold">${(prodStats.beginningStock || 0).toLocaleString()}</strong> |</span>
-                  <span>ตรวจพบจริง: <strong class="theme-text font-semibold">${prodStats.currentStock.toLocaleString()}</strong> |</span>
-                  <span>ยอดจอง: <strong class="text-brandOrange font-semibold">${prodStats.reservedStock.toLocaleString()}</strong></span>
+                  <span>Opening Stock: <strong class="theme-text font-semibold">${(prodStats.beginningStock || 0).toLocaleString()}</strong> |</span>
+                  <span>Current Stock: <strong class="theme-text font-semibold">${prodStats.currentStock.toLocaleString()}</strong> |</span>
+                  <span>Reserved Stock: <strong class="text-brandOrange font-semibold">${prodStats.reservedStock.toLocaleString()}</strong></span>
                 </div>
               </div>
             </div>
@@ -1316,7 +1315,7 @@
 
         if (activePanelRows === 0) {
           whCardHtml += `
-            <p class="text-center py-6 theme-text-muted text-xs">ยังไม่มีสต็อกสำหรับสาขานี้</p>
+            <p class="text-center py-6 theme-text-muted text-xs">No stock available</p>
           `;
         }
 
@@ -1390,7 +1389,7 @@
         }
         if (rolePerms.canDeleteTxn) {
           buttonsHtml += `
-            <button onclick="deleteTransaction('${t.id}')" title="ลบข้อมูลถาวร" class="text-brandRed hover:text-red-300 bg-brandRed/10 hover:bg-brandRed/20 px-2 py-1 rounded text-[11px] font-bold transition-all ml-1">
+            <button onclick="deleteTransaction('${t.id}')" title="Delete Permanently" class="text-brandRed hover:text-red-300 bg-brandRed/10 hover:bg-brandRed/20 px-2 py-1 rounded text-[11px] font-bold transition-all ml-1">
               <i class="fa-solid fa-trash-can"></i>
             </button>
           `;
@@ -1538,7 +1537,7 @@
         const availableStock = currentStats.currentStock - currentStats.reservedStock;
 
         if (availableStock < qty) {
-          showToast(`สินค้าไม่พอจำหน่าย: สาขานี้มีแผงว่างพร้อมจำหน่ายเพียง ${availableStock} แผ่นเท่านั้น`, "error");
+          showToast(`Not Enough Stock Available: Only ${availableStock} Pcs. is available for sale at this branch.`, "error");
           return;
         }
       }
