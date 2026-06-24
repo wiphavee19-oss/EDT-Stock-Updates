@@ -1486,8 +1486,8 @@
         let buttonsHtml = '';
         if (rolePerms.canUpdateStatus) {
           buttonsHtml += `
-            <button onclick="openStatusChangeModal('${t.id}', '${t.status}')" title="เปลี่ยนสถานะ" class="text-brandGreen hover:text-emerald-400 bg-brandGreen/10 hover:bg-brandGreen/20 px-2 py-1 rounded text-[11px] font-bold transition-all">
-              <i class="fa-solid fa-pen-to-square"></i> สถานะ
+            <button onclick="openStatusChangeModal('${t.id}', '${t.status}')" title="Change Status" class="text-brandGreen hover:text-emerald-400 bg-brandGreen/10 hover:bg-brandGreen/20 px-2 py-1 rounded text-[11px] font-bold transition-all">
+              <i class="fa-solid fa-pen-to-square"></i> Status
             </button>
           `;
         }
@@ -2151,8 +2151,8 @@
 
         if (canManage) {
           actions = `
-            <button onclick="openWarehouseModal('${w.id}')" class="text-brandGreen hover:text-emerald-400 font-bold mr-3"><i class="fa-solid fa-pen-to-square"></i> แก้ไข</button>
-            <button onclick="deleteWarehouse('${w.id}')" class="text-brandRed hover:text-red-300 font-bold"><i class="fa-solid fa-trash-can"></i> ลบ</button>
+            <button onclick="openWarehouseModal('${w.id}')" class="text-brandGreen hover:text-emerald-400 font-bold mr-3"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button onclick="deleteWarehouse('${w.id}')" class="text-brandRed hover:text-red-300 font-bold"><i class="fa-solid fa-trash-can"></i> Delete</button>
           `;
         }
 
