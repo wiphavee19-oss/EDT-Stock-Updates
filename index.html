@@ -277,13 +277,13 @@
       <div class="bg-gradient-to-r from-emerald-950/40 via-slate-900/10 to-slate-900/10 border-l-4 border-brandGreen p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 theme-card border">
         <div>
           <h2 class="text-base font-bold theme-text flex items-center gap-2">
-            <i class="fa-solid fa-circle-info text-brandGreen"></i> ตรวจสอบสินค้าพร้อมขาย          </h2>
+            <i class="fa-solid fa-circle-info text-brandGreen"></i> Checking Status          </h2>
           <p class="text-xs theme-text-muted mt-0.5">Note: <span class="text-brandGreen font-semibold">Available</span> = Current Stock - Reserved</p>
         </div>
         <div class="flex items-center gap-2 w-full md:w-auto">
           <div class="relative w-full">
             <i class="fa-solid fa-magnifying-glass text-slate-400 absolute ml-3 mt-2.5"></i>
-            <input type="text" id="dashboardSearch" oninput="renderDashboard()" placeholder="พิมพ์ยี่ห้อ ขนาดวัตต์ หรือรหัส..." class="theme-inner border theme-border rounded-lg pl-9 pr-4 py-2 text-xs theme-text placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brandGreen w-full md:w-64">
+            <input type="text" id="dashboardSearch" oninput="renderDashboard()" placeholder="Type..." class="theme-inner border theme-border rounded-lg pl-9 pr-4 py-2 text-xs theme-text placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brandGreen w-full md:w-64">
           </div>
         </div>
       </div>
@@ -353,7 +353,7 @@
         <div class="theme-inner border theme-border p-4 rounded-xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <!-- Timeframe -->
           <div>
-            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">ช่วงเวลา</label>
+            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">Time frame</label>
             <div class="flex gap-1.5">
               <button onclick="setHistoryTimeframe('daily')" id="timeframe-daily" class="flex-1 bg-brandGreen text-slate-950 font-bold text-[10px] uppercase py-1.5 rounded transition-all">Daily</button>
               <button onclick="setHistoryTimeframe('monthly')" id="timeframe-monthly" class="flex-1 theme-card border theme-border theme-text-muted font-bold text-[10px] uppercase py-1.5 rounded transition-all">Monthly</button>
@@ -361,21 +361,21 @@
           </div>
           <!-- Product Selector -->
           <div>
-            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">สินค้า</label>
+            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">Product</label>
             <select id="filterProduct" class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
               <option value="ALL">Total Products</option>
             </select>
           </div>
           <!-- Warehouse Selector -->
           <div>
-            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">คลังสินค้า</label>
+            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">Warehouse</label>
             <select id="filterWarehouse" class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
               <option value="ALL">All Warehouses</option>
             </select>
           </div>
           <!-- Action Type -->
           <div>
-            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">กรองประเภทธุรกรรม</label>
+            <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">Filter</label>
             <select id="filterAction" class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
               <option value="ALL">ALL</option>
               <option value="IN">Stock IN</option>
@@ -388,7 +388,7 @@
           <!-- Customer Input -->
           <div>
             <label class="block text-[10px] font-extrabold uppercase theme-text-muted tracking-wider mb-1.5">Type customer or supplier name...</label>
-            <input type="text" id="filterCustomer" placeholder="พิมพ์ชื่อค้นหา..." class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
+            <input type="text" id="filterCustomer" placeholder="Search..." class="theme-card border theme-border rounded text-xs p-1.5 theme-text w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
           </div>
         </div>
 
@@ -441,9 +441,14 @@
             <h2 class="text-base font-bold theme-text">Solar Product Catalog</h2>
             <p class="text-xs theme-text-muted">Configure Solar Panel Models, Brands, and Wattage Ratings</p>
           </div>
-          <button id="addProductBtn" onclick="openProductModal()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition-all">
-            <i class="fa-solid fa-plus"></i> Add New Product
-          </button>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <select id="catalogWarehouseFilter" onchange="renderProductsTable()" class="theme-inner border theme-border rounded text-xs p-2 theme-text w-full sm:w-auto focus:outline-none focus:ring-1 focus:ring-brandGreen">
+              <option value="ALL">All Warehouses</option>
+            </select>
+            <button id="addProductBtn" onclick="openProductModal()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap">
+              <i class="fa-solid fa-plus"></i> Add New Product
+            </button>
+          </div>
         </div>
 
         <div class="overflow-x-auto border theme-border rounded-xl">
@@ -451,9 +456,11 @@
             <thead>
               <tr class="theme-inner border-b theme-border theme-text-muted text-[10px] font-extrabold uppercase tracking-wider">
                 <th class="py-3 px-4">SKU </th>
+                <th class="py-3 px-4">Warehouse</th>
+                <th class="py-3 px-4">Category</th>
                 <th class="py-3 px-4">Brand</th>
                 <th class="py-3 px-4">Model</th>
-                <th class="py-3 px-4">Watt</th>
+                <th class="py-3 px-4">Watt/Spec</th>
                 <th class="py-3 px-4 text-center">Setting</th>
               </tr>
             </thead>
@@ -493,6 +500,39 @@
           </table>
         </div>
       </div>
+
+      <!-- System Settings & Danger Zone -->
+      <div class="theme-card border rounded-2xl p-6 shadow-xl space-y-6 mt-6 border-brandRed/20">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-base font-bold text-brandRed"><i class="fa-solid fa-triangle-exclamation"></i> System Settings & Danger Zone</h2>
+            <p class="text-xs theme-text-muted">Advanced Settings & Clear Data (Admin Only)</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Theme Toggle -->
+          <div class="theme-inner border theme-border p-4 rounded-xl flex items-center justify-between">
+            <div>
+              <h4 class="text-sm font-bold theme-text">Change Theme</h4>
+              <p class="text-[10px] theme-text-muted">System Light/Dark Mode</p>
+            </div>
+            <button onclick="toggleTheme()" class="bg-slate-800 border theme-border text-slate-100 p-2 rounded-lg hover:bg-slate-700 transition-all flex items-center justify-center w-10 h-10 shadow-md">
+              <i class="fa-solid fa-sun text-amber-400"></i>
+            </button>
+          </div>
+          <!-- Clear Data -->
+          <div class="theme-inner border border-brandRed/30 p-4 rounded-xl flex items-center justify-between">
+            <div>
+              <h4 class="text-sm font-bold text-brandRed">Clear All Stock Data</h4>
+              <p class="text-[10px] text-brandRed/70">Delete In/Out Log & Reset Inventory to 0</p>
+            </div>
+            <button onclick="clearAllData()" id="clearDataBtn" class="bg-brandRed hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg text-xs transition-all flex items-center gap-2 shadow-md">
+              <i class="fa-solid fa-trash-can"></i> Clear All
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </main>
@@ -603,7 +643,7 @@
 
           <!-- Remarks -->
           <div class="col-span-2">
-            <label for="txnRemark" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">คNotes</label>
+            <label for="txnRemark" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Notes</label>
             <textarea id="txnRemark" rows="2" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="Additional Notes & Details"></textarea>
           </div>
         </div>
@@ -656,6 +696,20 @@
       </div>
       <form id="productForm" onsubmit="handleProductSubmit(event)" class="p-6 space-y-4">
         <input type="hidden" id="editProductId">
+        <div>
+          <label for="prodWarehouse" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Warehouse *</label>
+          <select id="prodWarehouse" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+        <div>
+          <label for="prodCategory" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Category  *</label>
+          <select id="prodCategory" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
+            <option value="Solar Panel">Solar Panel </option>
+            <option value="Inverter">Inverter </option>
+            <option value="Accessory">Accessory </option>
+          </select>
+        </div>
         <div>
           <label for="prodBrand" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Brand *</label>
           <input type="text" id="prodBrand" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น JinkoSolar">
@@ -1056,15 +1110,17 @@
 
       // Default products
       const prods = [
-        { id: 'rec_410', brand: 'REC Solar', model: 'REC410TP5 Black', wattage: 410, code: 'REC410TP5' },
-        { id: 'cs_555', brand: 'Canadian Solar', model: 'CS6W-555MS Bifacial', wattage: 555, code: 'CS6W-555MS' },
-        { id: 'cs_720', brand: 'Canadian Solar', model: 'CS7N-720W HighPower', wattage: 720, code: 'CS7N-720W' },
-        { id: 'jinko_435', brand: 'Jinko Solar', model: 'JKM435N Tiger Neo', wattage: 435, code: 'JKM435-TN' }
+        { id: 'rec_410', category: 'Solar Panel', brand: 'REC Solar', model: 'REC410TP5 Black', wattage: 410, code: 'REC410TP5', warehouseId: 'sbs_wh' },
+        { id: 'cs_555', category: 'Solar Panel', brand: 'Canadian Solar', model: 'CS6W-555MS Bifacial', wattage: 555, code: 'CS6W-555MS', warehouseId: 'sbs_wh' },
+        { id: 'cs_720', category: 'Solar Panel', brand: 'Canadian Solar', model: 'CS7N-720W HighPower', wattage: 720, code: 'CS7N-720W', warehouseId: 'edt_wh' },
+        { id: 'jinko_435', category: 'Solar Panel', brand: 'Jinko Solar', model: 'JKM435N Tiger Neo', wattage: 435, code: 'JKM435-TN', warehouseId: 'chonburi_wh' },
+        { id: 'huawei_5k', category: 'Inverter', brand: 'Huawei', model: 'SUN2000-5KTL-L1', wattage: 5000, code: 'HW-5KTL', warehouseId: 'bkk_wh' },
+        { id: 'cable_4mm', category: 'Accessory', brand: 'Link', model: 'PV Cable 4mm (100m)', wattage: 0, code: 'CBL-4MM-100', warehouseId: 'bkk_wh' }
       ];
 
       prods.forEach(p => {
         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'products', p.id);
-        batch.set(docRef, { brand: p.brand, model: p.model, wattage: p.wattage, code: p.code });
+        batch.set(docRef, { category: p.category || 'Solar Panel', brand: p.brand, model: p.model, wattage: p.wattage, code: p.code, warehouseId: p.warehouseId });
       });
 
       // Seed initial inventories (เพิ่ม ยอดยกมาต้นเดือน beginning ในตัวอย่างข้อมูลเริ่มต้น)
@@ -1115,6 +1171,8 @@
       const txnWarehouseSelect = document.getElementById('txnWarehouse');
       const filterProductSelect = document.getElementById('filterProduct');
       const filterWarehouseSelect = document.getElementById('filterWarehouse');
+      const prodWarehouseSelect = document.getElementById('prodWarehouse');
+      const catalogWarehouseFilter = document.getElementById('catalogWarehouseFilter');
 
       if (!txnProductSelect) return;
 
@@ -1122,6 +1180,8 @@
       txnWarehouseSelect.innerHTML = '';
       filterProductSelect.innerHTML = '<option value="ALL">All Products</option>';
       filterWarehouseSelect.innerHTML = '<option value="ALL">All Warehouses</option>';
+      if (prodWarehouseSelect) prodWarehouseSelect.innerHTML = '';
+      if (catalogWarehouseFilter) catalogWarehouseFilter.innerHTML = '<option value="ALL">All Warehouses</option>';
 
       products.forEach(p => {
         const optionText = `${p.brand} - ${p.model} (${p.code}) [${p.wattage}W]`;
@@ -1132,6 +1192,8 @@
       warehouses.forEach(w => {
         txnWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}</option>`;
         filterWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}</option>`;
+        if (prodWarehouseSelect) prodWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}</option>`;
+        if (catalogWarehouseFilter) catalogWarehouseFilter.innerHTML += `<option value="${w.id}">${w.name}</option>`;
       });
     };
 
@@ -1190,8 +1252,10 @@
 
       if (p.canManageWarehouses) {
         addWarehouseBtn?.classList.remove('hidden');
+        document.getElementById('clearDataBtn')?.classList.remove('hidden');
       } else {
         addWarehouseBtn?.classList.add('hidden');
+        document.getElementById('clearDataBtn')?.classList.add('hidden');
       }
 
       renderDashboard();
@@ -1252,12 +1316,21 @@
       warehouses.forEach(wh => {
         const whStock = localStock[wh.id] || {};
         
-        const matchedProducts = products.filter(p => {
+        // 1. กรองเฉพาะสินค้าที่ผูกกับโกดังนี้
+        let productsForThisWarehouse = products.filter(p => {
+          // หากสินค้าเก่าไม่มีข้อมูล warehouseId (จากอดีต) ให้แสดงในโกดังแรกสุดเป็นค่าเริ่มต้นกันตกหล่น
+          if (!p.warehouseId && warehouses.length > 0 && warehouses[0].id === wh.id) return true;
+          return p.warehouseId === wh.id;
+        });
+
+        // 2. นำสินค้าเฉพาะของโกดังนี้มาประมวลผลกับช่องค้นหา (Search)
+        const matchedProducts = productsForThisWarehouse.filter(p => {
           return p.brand.toLowerCase().includes(searchVal) || 
                  p.model.toLowerCase().includes(searchVal) || 
                  p.code.toLowerCase().includes(searchVal);
         });
 
+        // หากโกดังนี้ไม่มีสินค้าที่ตรงเงื่อนไขเลย ให้ข้ามการสร้างการ์ดโกดังนี้ไป
         if (matchedProducts.length === 0 && searchVal !== '') return;
 
         let whCardHtml = `
@@ -1270,47 +1343,78 @@
                 ${matchedProducts.length} items
               </span>
             </div>
-            <div class="p-4 space-y-3">
+            <div class="p-4 space-y-5">
         `;
 
         let activePanelRows = 0;
 
-        matchedProducts.forEach(prod => {
-          const prodStats = whStock[prod.id] || { currentStock: 0, reservedStock: 0, beginningStock: 0 };
-          const availableStock = prodStats.currentStock - prodStats.reservedStock;
+        // จัดกลุ่มสินค้าตามหมวดหมู่ (Category Grouping)
+        const categories = [
+          { key: 'Solar Panel', icon: 'fa-solar-panel', color: 'text-brandGreen' },
+          { key: 'Inverter', icon: 'fa-plug-circle-bolt', color: 'text-brandOrange' },
+          { key: 'Accessory', icon: 'fa-toolbox', color: 'text-brandBlue' }
+        ];
 
-          let badgeColor = 'text-brandGreen bg-brandGreen/10 border-brandGreen/20';
-          let quantityText = `${availableStock} Available Stock`;
+        categories.forEach(catGroup => {
+          // ดึงเฉพาะสินค้าที่ตรงกับหมวดหมู่นี้ จากรายการที่กรองตามโกดังแล้ว
+          const prodsInCat = matchedProducts.filter(p => (p.category || 'Solar Panel') === catGroup.key);
           
-          if (availableStock <= 0) {
-            badgeColor = 'text-brandRed bg-brandRed/10 border-brandRed/20';
-            quantityText = `Out of Stock`;
-          } else if (prodStats.reservedStock > 0) {
-            badgeColor = 'text-brandOrange bg-brandOrange/10 border-brandOrange/20';
-          }
+          if (prodsInCat.length > 0) {
+            // สร้างหัวข้อหมวดหมู่สินค้า
+            whCardHtml += `
+              <div>
+                <h5 class="text-xs font-bold ${catGroup.color} mb-2 flex items-center gap-1.5 border-b theme-border pb-1">
+                  <i class="fa-solid ${catGroup.icon}"></i> ${catGroup.key}
+                </h5>
+                <div class="space-y-3">
+            `;
 
-          whCardHtml += `
-            <div class="flex items-center justify-between p-3.5 rounded-xl theme-inner border theme-border hover:bg-slate-550 transition-all">
-              <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                  <span class="text-xs font-bold theme-text">${prod.code}</span>
-                  <span class="text-[10px] theme-text-muted font-semibold bg-brandGreen/10 px-2 py-0.5 rounded">${prod.wattage}W</span>
+            prodsInCat.forEach(prod => {
+              const prodStats = whStock[prod.id] || { currentStock: 0, reservedStock: 0, beginningStock: 0 };
+              const availableStock = prodStats.currentStock - prodStats.reservedStock;
+
+              let badgeColor = 'text-brandGreen bg-brandGreen/10 border-brandGreen/20';
+              let quantityText = `${availableStock} Available`;
+              
+              if (availableStock <= 0) {
+                badgeColor = 'text-brandRed bg-brandRed/10 border-brandRed/20';
+                quantityText = `Out of Stock`;
+              } else if (prodStats.reservedStock > 0) {
+                badgeColor = 'text-brandOrange bg-brandOrange/10 border-brandOrange/20';
+              }
+
+              // นำ Badge หมวดหมู่ออกเพราะมี Header แล้ว และปรับ Layout แบบ Flex-col บนมือถือ
+              whCardHtml += `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl theme-inner border theme-border hover:bg-slate-800 transition-all gap-3">
+                  <div class="space-y-1 flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="text-xs font-bold theme-text">${prod.code}</span>
+                      <span class="text-[10px] text-white font-semibold bg-slate-800 px-2 py-0.5 rounded">${prod.category || 'Solar Panel'}</span>
+                      ${prod.wattage > 0 ? `<span class="text-[10px] theme-text-muted font-semibold bg-brandGreen/10 px-2 py-0.5 rounded">${prod.wattage}W</span>` : ''}
+                    </div>
+                    <p class="text-[11px] theme-text-muted leading-tight">${prod.brand} • ${prod.model}</p>
+                  </div>
+                  <div class="text-left sm:text-right shrink-0">
+                    <span class="text-xs font-black px-3 py-1.5 rounded-lg border ${badgeColor} inline-block font-mono mb-1">
+                      ${quantityText}
+                    </span>
+                    <div class="text-[10px] theme-text-muted flex flex-wrap items-center sm:justify-end gap-x-2 gap-y-1">
+                      <span>Opening: <strong class="theme-text font-semibold">${(prodStats.beginningStock || 0).toLocaleString()}</strong> |</span>
+                      <span>Current: <strong class="theme-text font-semibold">${prodStats.currentStock.toLocaleString()}</strong> |</span>
+                      <span>Reserved: <strong class="text-brandOrange font-semibold">${prodStats.reservedStock.toLocaleString()}</strong></span>
+                    </div>
+                  </div>
                 </div>
-                <p class="text-[11px] theme-text-muted">${prod.brand} • ${prod.model}</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs font-black px-3 py-1.5 rounded-lg border ${badgeColor} inline-block font-mono">
-                  ${quantityText}
-                </span>
-                <div class="text-[10px] theme-text-muted mt-1 space-x-2 flex items-center justify-end flex-wrap gap-1">
-                  <span>Opening Stock: <strong class="theme-text font-semibold">${(prodStats.beginningStock || 0).toLocaleString()}</strong> |</span>
-                  <span>Current Stock: <strong class="theme-text font-semibold">${prodStats.currentStock.toLocaleString()}</strong> |</span>
-                  <span>Reserved Stock: <strong class="text-brandOrange font-semibold">${prodStats.reservedStock.toLocaleString()}</strong></span>
+              `;
+              activePanelRows++;
+            });
+
+            // ปิด Div กลุ่มสินค้า
+            whCardHtml += `
                 </div>
               </div>
-            </div>
-          `;
-          activePanelRows++;
+            `;
+          }
         });
 
         if (activePanelRows === 0) {
@@ -1348,15 +1452,15 @@
 
         let actionBadge = '';
         if (t.actionType === 'IN') {
-          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandGreen/10 border border-brandGreen/20 text-brandGreen text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-arrow-down-long"></i> IN</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandGreen text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-arrow-down-long"></i> IN</span>`;
         } else if (t.actionType === 'OUT') {
-          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandRed/10 border border-brandRed/20 text-brandRed text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-arrow-up-long"></i> OUT</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandRed text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-arrow-up-long"></i> OUT</span>`;
         } else if (t.actionType === 'RESERVE') {
-          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandOrange/10 border border-brandOrange/20 text-brandOrange text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-lock"></i> RESERVE</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandOrange text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-lock"></i> RESERVE</span>`;
         } else if (t.actionType === 'EXTERNAL') {
-          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandBlue/10 border border-brandBlue/20 text-brandBlue text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-truck-field"></i> EXT SUPPLY</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandBlue text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-truck-field"></i> EXT SUPPLY</span>`;
         } else if (t.actionType === 'BEGINNING') {
-          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandPurple/10 border border-brandPurple/20 text-brandPurple text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-calendar-check"></i> BEGINNING</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandPurple text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-calendar-check"></i> BEGINNING</span>`;
         }
 
         let statusBadge = '';
@@ -1476,34 +1580,34 @@
 
       if (action === 'RESERVE') {
         statusSelector.value = 'Reserved';
-        customerLabel.textContent = 'ชื่อลูกค้า / โครงการที่เปิดจองสต็อก *';
-        customerInput.placeholder = "เช่น บจก. พลังงานแสงอาทิตย์ร่วมใจ";
+        customerLabel.textContent = 'Customer Name *';
+        customerInput.placeholder = "เช่น บจก. พลังงานแสงอาทิตย์";
         customerInput.required = true;
-        doLabel.textContent = 'หมายเลขใบเสนอราคา / สัญญาจองสินค้า *';
+        doLabel.textContent = 'Quotation *';
         doInput.placeholder = "เช่น QT-2026-9912";
         doInput.required = true;
       } else if (action === 'EXTERNAL') {
         statusSelector.value = 'Completed';
-        customerLabel.textContent = 'ชื่อซัพพลายเออร์ / แหล่งซัพพลายภายนอก *';
-        customerInput.placeholder = "เช่น โรงงานผลิต Jinko Global Logistics";
+        customerLabel.textContent = 'Supplier Name *';
+        customerInput.placeholder = "เช่น Synnex Logistics";
         customerInput.required = true;
-        doLabel.textContent = 'เลขที่ใบกำกับสินค้า / เอกสารนำเข้าคลัง *';
+        doLabel.textContent = 'INV./Receiving Doc No. *';
         doInput.placeholder = "เช่น INV-EXT-4421";
         doInput.required = true;
       } else if (action === 'BEGINNING') {
         statusSelector.value = 'Completed';
-        customerLabel.textContent = 'ระบุรอบบันทึก / เหตุผลการตั้งค่ายอดยกมา *';
+        customerLabel.textContent = 'Accounting Period *';
         customerInput.placeholder = "เช่น ยอดยกมาเริ่มรอบเดือน มิถุนายน 2026";
         customerInput.required = true;
-        doLabel.textContent = 'เลขเอกสารปิดสต็อกรอบบิลก่อนหน้า (ไม่บังคับ)';
+        doLabel.textContent = 'Previous Stock Closing Doc No. (Optional)';
         doInput.placeholder = "เช่น WMS-CLOSE-06";
         doInput.required = false;
       } else {
         statusSelector.value = 'Completed';
-        customerLabel.textContent = 'ชื่อผู้มารับสินค้า / โครงการปลายทาง (ไม่บังคับ)';
+        customerLabel.textContent = 'Collected By / Project Site (Optional)';
         customerInput.placeholder = "เช่น ช่างหน้างาน พระราม 2";
         customerInput.required = false;
-        doLabel.textContent = 'หมายเลข DO / เลขที่ใบปล่อยสินค้า (ไม่บังคับ)';
+        doLabel.textContent = 'DO NO.(Optional)';
         doInput.placeholder = "เช่น DO-998822";
         doInput.required = false;
       }
@@ -1675,15 +1779,15 @@
 
         let actionBadge = '';
         if (t.actionType === 'IN') {
-          actionBadge = `<span class="inline-flex items-center gap-1 text-brandGreen font-bold whitespace-nowrap"><i class="fa-solid fa-circle-down"></i> IN</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandGreen text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-circle-down"></i> IN</span>`;
         } else if (t.actionType === 'OUT') {
-          actionBadge = `<span class="inline-flex items-center gap-1 text-brandRed font-bold whitespace-nowrap"><i class="fa-solid fa-circle-up"></i> OUT</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandRed text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-circle-up"></i> OUT</span>`;
         } else if (t.actionType === 'RESERVE') {
-          actionBadge = `<span class="inline-flex items-center gap-1 text-brandOrange font-bold whitespace-nowrap"><i class="fa-solid fa-lock"></i> RESERVE</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandOrange text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-lock"></i> RESERVE</span>`;
         } else if (t.actionType === 'EXTERNAL') {
-          actionBadge = `<span class="inline-flex items-center gap-1 text-brandBlue font-bold whitespace-nowrap"><i class="fa-solid fa-truck-field"></i> EXT SUPPLY</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandBlue text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-truck-field"></i> EXT SUPPLY</span>`;
         } else if (t.actionType === 'BEGINNING') {
-          actionBadge = `<span class="inline-flex items-center gap-1 text-brandPurple font-bold whitespace-nowrap"><i class="fa-solid fa-calendar-check"></i> BEGINNING</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandPurple text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-calendar-check"></i> BEGINNING</span>`;
         }
 
         let statusBadge = '';
@@ -1862,15 +1966,20 @@
       if (id) {
         const p = products.find(prod => prod.id === id);
         if (p) {
-          document.getElementById('productModalTitle').textContent = "แก้ไขทะเบียนแผงโซลาร์เซลล์หลัก";
+          document.getElementById('productModalTitle').textContent = "แก้ไขทะเบียนสินค้าหลัก";
           document.getElementById('editProductId').value = p.id;
+          document.getElementById('prodWarehouse').value = p.warehouseId || (warehouses.length > 0 ? warehouses[0].id : '');
+          document.getElementById('prodCategory').value = p.category || 'Solar Panel';
           document.getElementById('prodBrand').value = p.brand;
           document.getElementById('prodModel').value = p.model;
           document.getElementById('prodWattage').value = p.wattage;
           document.getElementById('prodCode').value = p.code;
         }
       } else {
-        document.getElementById('productModalTitle').textContent = "เพิ่มทะเบียนแผงโซลาร์เซลล์หลัก";
+        document.getElementById('productModalTitle').textContent = "Solar Panel & Accessory Registry";
+        if (warehouses.length > 0) {
+          document.getElementById('prodWarehouse').value = warehouses[0].id;
+        }
       }
 
       document.getElementById('productModal').classList.remove('hidden');
@@ -1884,18 +1993,20 @@
       event.preventDefault();
 
       const id = document.getElementById('editProductId').value;
+      const warehouseId = document.getElementById('prodWarehouse').value;
+      const category = document.getElementById('prodCategory').value;
       const brand = document.getElementById('prodBrand').value.trim();
       const model = document.getElementById('prodModel').value.trim();
-      const wattage = parseInt(document.getElementById('prodWattage').value);
+      const wattage = parseInt(document.getElementById('prodWattage').value) || 0;
       const code = document.getElementById('prodCode').value.toUpperCase().trim();
 
       try {
         if (id) {
-          await updateDoc(getDocRef('products', id), { brand, model, wattage, code });
+          await updateDoc(getDocRef('products', id), { warehouseId, category, brand, model, wattage, code });
           showToast("บันทึกอัปเดตโมเดลเรียบร้อยแล้ว", "success");
         } else {
-          await addDoc(getCollectionRef('products'), { brand, model, wattage, code });
-          showToast("เพิ่มโมเดลโซลาร์เซลล์ใหม่ลงทะเบียนหลักสำเร็จ!", "success");
+          await addDoc(getCollectionRef('products'), { warehouseId, category, brand, model, wattage, code });
+          showToast("เพิ่มสินค้ารายการใหม่ลงทะเบียนหลักสำเร็จ!", "success");
         }
         closeProductModal();
       } catch (err) {
@@ -1927,24 +2038,32 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      products.forEach(p => {
+      const filterWh = document.getElementById('catalogWarehouseFilter')?.value || 'ALL';
+      
+      const filteredProducts = products.filter(p => filterWh === 'ALL' || p.warehouseId === filterWh);
+
+      filteredProducts.forEach(p => {
         const canManage = rolesConfig[simulatedRole].canManageProducts;
         let actions = '-';
 
         if (canManage) {
           actions = `
-            <button onclick="openProductModal('${p.id}')" class="text-brandGreen hover:text-emerald-400 font-bold mr-3"><i class="fa-solid fa-pen-to-square"></i> แก้ไข</button>
-            <button onclick="deleteProduct('${p.id}')" class="text-brandRed hover:text-red-300 font-bold"><i class="fa-solid fa-trash-can"></i> ลบ</button>
+            <button onclick="openProductModal('${p.id}')" class="text-brandGreen hover:text-emerald-400 font-bold mr-3"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
+            <button onclick="deleteProduct('${p.id}')" class="text-brandRed hover:text-red-300 font-bold"><i class="fa-solid fa-trash-can"></i> Delete</button>
           `;
         }
+
+        const matchedWh = warehouses.find(w => w.id === p.warehouseId) || { name: 'All / Global' };
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-900/10 border-b theme-border";
         tr.innerHTML = `
           <td class="py-3.5 px-4 font-mono font-bold text-brandGreen">${p.code}</td>
+          <td class="py-3.5 px-4 theme-text">${matchedWh.name}</td>
+          <td class="py-3.5 px-4 theme-text font-medium"><span class="bg-slate-800 text-white px-2 py-1 rounded text-[10px]">${p.category || 'Solar Panel'}</span></td>
           <td class="py-3.5 px-4 theme-text font-medium">${p.brand}</td>
           <td class="py-3.5 px-4 theme-text">${p.model}</td>
-          <td class="py-3.5 px-4 theme-text-muted font-mono font-bold">${p.wattage} W</td>
+          <td class="py-3.5 px-4 theme-text-muted font-mono font-bold">${p.wattage > 0 ? p.wattage + ' W' : '-'}</td>
           <td class="py-3.5 px-4 text-center whitespace-nowrap">${actions}</td>
         `;
         tbody.appendChild(tr);
@@ -1967,12 +2086,12 @@
       if (id) {
         const wh = warehouses.find(w => w.id === id);
         if (wh) {
-          document.getElementById('warehouseModalTitle').textContent = "ปรับปรุงข้อมูลจุดคลังสินค้า";
+          document.getElementById('warehouseModalTitle').textContent = "Edit Warehouse";
           document.getElementById('editWarehouseId').value = wh.id;
           document.getElementById('whName').value = wh.name;
         }
       } else {
-        document.getElementById('warehouseModalTitle').textContent = "ลงทะเบียนพิกัดคลังย่อยใหม่";
+        document.getElementById('warehouseModalTitle').textContent = "Add Warehouse";
       }
 
       document.getElementById('warehouseModal').classList.remove('hidden');
@@ -2046,6 +2165,48 @@
         `;
         tbody.appendChild(tr);
       });
+    };
+
+    // ----------------------------------------------------
+    // CLEAR ALL DATA FUNCTION (DANGER ZONE)
+    // ----------------------------------------------------
+    window.clearAllData = async () => {
+      if (!rolesConfig[simulatedRole].canDeleteTxn) {
+        showToast("จำกัดสิทธิ์เฉพาะ Admin เท่านั้น", "error");
+        return;
+      }
+      
+      if (!confirm("⚠️ คำเตือนร้ายแรง: คุณแน่ใจหรือไม่ว่าต้องการ 'ล้างข้อมูลสต็อกและประวัติทั้งหมด'?\n\nการกระทำนี้จะลบรายการเข้า/ออกทั้งหมด และรีเซ็ตจำนวนสต็อกทุกสินค้าในทุกสาขากลับเป็น 0! (ข้อมูลสินค้าและรายชื่อคลังจะยังอยู่)")) return;
+      
+      if (prompt("พิมพ์คำว่า CONFIRM เพื่อยืนยันการล้างข้อมูลคลังสินค้า:") !== "CONFIRM") {
+        showToast("ยกเลิกการล้างข้อมูลแล้ว", "info");
+        return;
+      }
+
+      try {
+        showToast("กำลังดำเนินการล้างข้อมูล... กรุณารอสักครู่", "info");
+        
+        const batch = writeBatch(db);
+        
+        // 1. ลบ Transactions ทั้งหมด
+        const txnsSnapshot = await getDocs(getCollectionRef('transactions'));
+        txnsSnapshot.docs.forEach((d) => {
+          batch.delete(d.ref);
+        });
+
+        // 2. ลบ Inventory ยอดสะสมทั้งหมด
+        const invSnapshot = await getDocs(getCollectionRef('inventory'));
+        invSnapshot.docs.forEach((d) => {
+          batch.delete(d.ref);
+        });
+
+        await batch.commit();
+        showToast("รีเซ็ตคลังสินค้าและลบประวัติทั้งหมดสำเร็จแล้ว!", "success");
+        
+      } catch (error) {
+        console.error("Error clearing data:", error);
+        showToast("พบปัญหาในการล้างข้อมูล โปรดลองอีกครั้ง", "error");
+      }
     };
 
     // ----------------------------------------------------
