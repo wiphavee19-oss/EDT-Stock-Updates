@@ -1195,7 +1195,7 @@
     };
 
     // ----------------------------------------------------
-    // DYNAMIC DROPDOWNS POPULATION
+    // DYNAMIC DROPDOWNS POPULATION (จุดแก้ไข: จัดกลุ่มสินค้าตามคลังใน Dropdown ด้วย <optgroup>)
     // ----------------------------------------------------
     const populateDropdowns = () => {
       const txnProductSelect = document.getElementById('txnProduct');
@@ -1214,10 +1214,37 @@
       if (prodWarehouseSelect) prodWarehouseSelect.innerHTML = '';
       if (catalogWarehouseFilter) catalogWarehouseFilter.innerHTML = '<option value="ALL">All Warehouses</option>';
 
+      // เติมตัวกรองสินค้า (Filter Product Select) หน้ารายงาน (History)
       products.forEach(p => {
-        const optionText = `${p.brand} - ${p.model} (${p.code}) [${p.wattage}W]`;
-        txnProductSelect.innerHTML += `<option value="${p.id}">${optionText}</option>`;
         filterProductSelect.innerHTML += `<option value="${p.id}">${p.code}</option>`;
+      });
+
+      // เติมเมนูเลือกสินค้าทำธุรกรรม (txnProductSelect) โดยแยกจัดกลุ่มตามคลังสินค้าและจัดเรียงลำดับอย่างเป็นระเบียบ
+      warehouses.forEach(w => {
+        // ค้นหาสินค้าทั้งหมดที่อยู่ในคลังสินค้านี้
+        const whProducts = products.filter(p => {
+          if (!p.warehouseId && warehouses.length > 0 && warehouses[0].id === w.id) return true;
+          return p.warehouseId === w.id;
+        });
+
+        // หากมีสินค้าในคลัง ให้สร้างกลุ่มตัวเลือกย่อย <optgroup> ของคลังนั้น ๆ
+        if (whProducts.length > 0) {
+          const optGroup = document.createElement('optgroup');
+          optGroup.label = `📍 ${w.name}${w.isHidden ? ' (Hidden)' : ''}`;
+          
+          whProducts.forEach(p => {
+            const catIcon = p.category === 'Inverter' ? '⚡' : (p.category === 'Accessory' ? '🔌' : '☀️');
+            const specText = p.wattage > 0 ? ` [${p.wattage}W]` : '';
+            const optionText = `${catIcon} ${p.brand} - ${p.model} (${p.code})${specText}`;
+            
+            const option = document.createElement('option');
+            option.value = p.id;
+            option.textContent = optionText;
+            optGroup.appendChild(option);
+          });
+          
+          txnProductSelect.appendChild(optGroup);
+        }
       });
 
       warehouses.forEach(w => {
