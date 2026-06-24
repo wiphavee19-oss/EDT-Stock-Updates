@@ -382,7 +382,7 @@
               <option value="OUT">Stock OUT</option>
               <option value="RESERVE">RESERVE</option>
               <option value="EXTERNAL">EXT SUPPLY</option>
-              <option value="Brought Forward">Brought Forward</option>
+              <option value="BEGINNING">Brought Forward</option>
             </select>
           </div>
           <!-- Customer Input -->
@@ -419,6 +419,7 @@
                 <th class="py-3 px-4">PIC</th>
                 <th class="py-3 px-4">Delivery</th>
                 <th class="py-3 px-4">Remark</th>
+                <th class="py-3 px-4 text-center">Setting</th>
               </tr>
             </thead>
             <tbody id="historyTableBody" class="text-xs divide-y theme-border">
@@ -1123,7 +1124,7 @@
         batch.set(docRef, { category: p.category || 'Solar Panel', brand: p.brand, model: p.model, wattage: p.wattage, code: p.code, warehouseId: p.warehouseId });
       });
 
-      // Seed initial inventories (เพิ่ม ยอดยกมาต้นเดือน beginning ในตัวอย่างข้อมูลเริ่มต้น)
+      // Seed initial inventories
       const initialStock = [
         { wh: 'sbs_wh', prod: 'rec_410', current: 150, reserved: 60, beginning: 100 }, 
         { wh: 'sbs_wh', prod: 'cs_555', current: 300, reserved: 20, beginning: 250 },  
@@ -1289,12 +1290,11 @@
         localStock[item.warehouseId][item.productId] = {
           currentStock: item.currentStock || 0,
           reservedStock: item.reservedStock || 0,
-          beginningStock: item.beginningStock || 0 // นำข้อมูลงวดเดิมเก็บเข้าคลังจำลอง
+          beginningStock: item.beginningStock || 0 
         };
         totalBeginningStock += parseInt(item.beginningStock || 0);
       });
 
-      // คำนวณความเคลื่อนไหวประจำวัน
       transactions.forEach(t => {
         if (t.date === todayStr && t.status !== 'Cancelled') {
           if (t.actionType === 'IN' || t.actionType === 'EXTERNAL') {
@@ -1307,7 +1307,6 @@
         }
       });
 
-      // แสดงค่า KPIs ด้านบนทั้ง 4 กล่อง
       document.getElementById('kpi-beginning-stock').textContent = totalBeginningStock.toLocaleString();
       document.getElementById('kpi-stock-in').textContent = stockInTodayCount.toLocaleString();
       document.getElementById('kpi-stock-out').textContent = stockOutTodayCount.toLocaleString();
@@ -1316,21 +1315,17 @@
       warehouses.forEach(wh => {
         const whStock = localStock[wh.id] || {};
         
-        // 1. กรองเฉพาะสินค้าที่ผูกกับโกดังนี้
         let productsForThisWarehouse = products.filter(p => {
-          // หากสินค้าเก่าไม่มีข้อมูล warehouseId (จากอดีต) ให้แสดงในโกดังแรกสุดเป็นค่าเริ่มต้นกันตกหล่น
           if (!p.warehouseId && warehouses.length > 0 && warehouses[0].id === wh.id) return true;
           return p.warehouseId === wh.id;
         });
 
-        // 2. นำสินค้าเฉพาะของโกดังนี้มาประมวลผลกับช่องค้นหา (Search)
         const matchedProducts = productsForThisWarehouse.filter(p => {
           return p.brand.toLowerCase().includes(searchVal) || 
                  p.model.toLowerCase().includes(searchVal) || 
                  p.code.toLowerCase().includes(searchVal);
         });
 
-        // หากโกดังนี้ไม่มีสินค้าที่ตรงเงื่อนไขเลย ให้ข้ามการสร้างการ์ดโกดังนี้ไป
         if (matchedProducts.length === 0 && searchVal !== '') return;
 
         let whCardHtml = `
@@ -1348,7 +1343,6 @@
 
         let activePanelRows = 0;
 
-        // จัดกลุ่มสินค้าตามหมวดหมู่ (Category Grouping)
         const categories = [
           { key: 'Solar Panel', icon: 'fa-solar-panel', color: 'text-brandGreen' },
           { key: 'Inverter', icon: 'fa-plug-circle-bolt', color: 'text-brandOrange' },
@@ -1356,11 +1350,9 @@
         ];
 
         categories.forEach(catGroup => {
-          // ดึงเฉพาะสินค้าที่ตรงกับหมวดหมู่นี้ จากรายการที่กรองตามโกดังแล้ว
           const prodsInCat = matchedProducts.filter(p => (p.category || 'Solar Panel') === catGroup.key);
           
           if (prodsInCat.length > 0) {
-            // สร้างหัวข้อหมวดหมู่สินค้า
             whCardHtml += `
               <div>
                 <h5 class="text-xs font-bold ${catGroup.color} mb-2 flex items-center gap-1.5 border-b theme-border pb-1">
@@ -1383,7 +1375,6 @@
                 badgeColor = 'text-brandOrange bg-brandOrange/10 border-brandOrange/20';
               }
 
-              // นำ Badge หมวดหมู่ออกเพราะมี Header แล้ว และปรับ Layout แบบ Flex-col บนมือถือ
               whCardHtml += `
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl theme-inner border theme-border hover:bg-slate-800 transition-all gap-3">
                   <div class="space-y-1 flex-1">
@@ -1409,7 +1400,6 @@
               activePanelRows++;
             });
 
-            // ปิด Div กลุ่มสินค้า
             whCardHtml += `
                 </div>
               </div>
@@ -1504,22 +1494,19 @@
         }
 
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-900/10 transition-colors theme-border";
+        tr.className = "hover:bg-slate-900/10 border-b theme-border";
         tr.innerHTML = `
-          <td class="py-3 px-4 font-mono theme-text">${t.date} <span class="theme-text-muted text-[10px]">${t.time || '00:00'}</span></td>
-          <td class="py-3 px-4">
-            <div class="font-bold theme-text">${matchedProd.code}</div>
-            <div class="text-[10px] theme-text-muted">${matchedProd.model}</div>
-          </td>
-          <td class="py-3 px-4 theme-text">${matchedWh.name}</td>
-          <td class="py-3 px-4 whitespace-nowrap">${actionBadge}</td>
-          <td class="py-3 px-4 font-bold text-right theme-text font-mono">${t.quantity}</td>
-          <td class="py-3 px-4 theme-text font-medium">${t.customerName || '<span class="text-slate-600">-</span>'}</td>
-          <td class="py-3 px-4 font-mono theme-text-muted text-[11px]">${t.doNumber || '<span class="text-slate-600">-</span>'}</td>
-          <td class="py-3 px-4 theme-text">${t.responsiblePerson}</td>
-          <td class="py-3 px-4">${statusBadge}</td>
-          <td class="py-3 px-4 theme-text-muted truncate max-w-[150px]" title="${t.remark || ''}">${t.remark || '-'}</td>
-          <td class="py-3 px-4 text-center whitespace-nowrap">${buttonsHtml}</td>
+          <td class="py-3.5 px-4 font-mono theme-text">${t.date} <span class="theme-text-muted text-[10px]">${t.time || '00:00'}</span></td>
+          <td class="py-3.5 px-4 font-bold theme-text">${matchedProd.code}</td>
+          <td class="py-3.5 px-4 theme-text">${matchedWh.name}</td>
+          <td class="py-3.5 px-4 whitespace-nowrap">${actionBadge}</td>
+          <td class="py-3.5 px-4 text-right font-bold theme-text font-mono">${t.quantity}</td>
+          <td class="py-3.5 px-4 theme-text font-medium">${t.customerName || '-'}</td>
+          <td class="py-3.5 px-4 font-mono theme-text-muted text-[11px]">${t.doNumber || '-'}</td>
+          <td class="py-3.5 px-4 theme-text">${t.responsiblePerson}</td>
+          <td class="py-3.5 px-4">${statusBadge}</td>
+          <td class="py-3.5 px-4 theme-text-muted" title="${t.remark || ''}">${t.remark || '-'}</td>
+          <td class="py-3.5 px-4 text-center whitespace-nowrap">${buttonsHtml}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1539,7 +1526,7 @@
       document.getElementById('txnCustomer').value = '';
       document.getElementById('txnDo').value = '';
       document.getElementById('txnRemark').value = '';
-      document.getElementById('txnResponsible').value = simulatedRole === 'Warehouse' ? 'Warehouse Operator' : 'Sales Representative';
+      document.getElementById('txnResponsible').value = simulatedRole === 'Warehouse' ? 'Warehouse Operator' : 'Admin';
       
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -1581,34 +1568,26 @@
       if (action === 'RESERVE') {
         statusSelector.value = 'Reserved';
         customerLabel.textContent = 'Customer Name *';
-        customerInput.placeholder = "เช่น บจก. พลังงานแสงอาทิตย์";
         customerInput.required = true;
-        doLabel.textContent = 'Quotation *';
-        doInput.placeholder = "เช่น QT-2026-9912";
+        doLabel.textContent = 'Quote / Contract No. *';
         doInput.required = true;
       } else if (action === 'EXTERNAL') {
         statusSelector.value = 'Completed';
         customerLabel.textContent = 'Supplier Name *';
-        customerInput.placeholder = "เช่น Synnex Logistics";
         customerInput.required = true;
-        doLabel.textContent = 'INV./Receiving Doc No. *';
-        doInput.placeholder = "เช่น INV-EXT-4421";
+        doLabel.textContent = 'Invoice / Import Doc No. *';
         doInput.required = true;
       } else if (action === 'BEGINNING') {
         statusSelector.value = 'Completed';
-        customerLabel.textContent = 'Accounting Period *';
-        customerInput.placeholder = "เช่น ยอดยกมาเริ่มรอบเดือน มิถุนายน 2026";
+        customerLabel.textContent = 'Note / Reason *';
         customerInput.required = true;
-        doLabel.textContent = 'Previous Stock Closing Doc No. (Optional)';
-        doInput.placeholder = "เช่น WMS-CLOSE-06";
+        doLabel.textContent = 'Previous Period Doc (Optional)';
         doInput.required = false;
       } else {
         statusSelector.value = 'Completed';
-        customerLabel.textContent = 'Collected By / Project Site (Optional)';
-        customerInput.placeholder = "เช่น ช่างหน้างาน พระราม 2";
+        customerLabel.textContent = 'Customer Name (Optional)';
         customerInput.required = false;
-        doLabel.textContent = 'DO NO.(Optional)';
-        doInput.placeholder = "เช่น DO-998822";
+        doLabel.textContent = 'DO No. (Optional)';
         doInput.required = false;
       }
     };
@@ -1634,14 +1613,13 @@
 
       const [datePart, timePart] = dateTimeVal.split('T');
 
-      // ตรวจสอบสต็อกพร้อมจำหน่ายสำหรับธุรกรรมการเบิกหรือจอง
       if (actionType === 'OUT' || actionType === 'RESERVE') {
         const invKey = `${warehouseId}_${productId}`;
         const currentStats = inventory[invKey] || { currentStock: 0, reservedStock: 0 };
         const availableStock = currentStats.currentStock - currentStats.reservedStock;
 
         if (availableStock < qty) {
-          showToast(`Not Enough Stock Available: Only ${availableStock} Pcs. is available for sale at this branch.`, "error");
+          showToast(`สินค้าไม่พอจำหน่าย: สาขานี้มีแผงว่างพร้อมจำหน่ายเพียง ${availableStock} แผ่นเท่านั้น`, "error");
           return;
         }
       }
@@ -1649,7 +1627,6 @@
       try {
         const batch = writeBatch(db);
 
-        // A. บันทึกประวัติความเคลื่อนไหวธุรกรรม
         const newTxnRef = doc(getCollectionRef('transactions'));
         batch.set(newTxnRef, {
           date: datePart,
@@ -1666,7 +1643,6 @@
           timestamp: serverTimestamp()
         });
 
-        // B. คำนวณปรับปรุงคลังสะสมแบบเรียลไทม์
         const invKey = `${warehouseId}_${productId}`;
         const invDocRef = getDocRef('inventory', invKey);
 
@@ -1693,7 +1669,6 @@
         if (reservedStockIncrement !== 0) invUpdateData.reservedStock = increment(reservedStockIncrement);
         
         if (setBeginningStock !== null) {
-          // หากตั้งค่ายอดยกมาใหม่ จะถือว่าเริ่มรอบเดือนใหม่: สต็อกยกมาสตาร์ทที่จำนวนนี้ และเคลียร์ยอดจองเก่า
           invUpdateData.beginningStock = setBeginningStock;
           invUpdateData.currentStock = setBeginningStock;
           invUpdateData.reservedStock = 0;
@@ -1703,7 +1678,7 @@
 
         await batch.commit();
 
-        showToast("บันทึกธุรกรรมและคำนวณยอดสต็อกรวมถึงยอดยกมาเรียบร้อยแล้ว!", "success");
+        showToast("บันทึกธุรกรรมและคำนวณยอดสต็อกเรียบร้อยแล้ว!", "success");
         closeUpdateModal();
       } catch (err) {
         console.error("Error committing transaction:", err);
@@ -1712,7 +1687,7 @@
     };
 
     // ----------------------------------------------------
-    // HISTORY FILTERING & EXPORT ENGINE (Rule 2 client-side)
+    // HISTORY FILTERING & EXPORT ENGINE
     // ----------------------------------------------------
     window.setHistoryTimeframe = (timeframe) => {
       currentHistoryTimeframe = timeframe;
@@ -1779,9 +1754,9 @@
 
         let actionBadge = '';
         if (t.actionType === 'IN') {
-          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandGreen text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-circle-down"></i> IN</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandGreen text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-arrow-down-long"></i> IN</span>`;
         } else if (t.actionType === 'OUT') {
-          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandRed text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-circle-up"></i> OUT</span>`;
+          actionBadge = `<span class="inline-flex items-center gap-1 bg-brandRed text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-arrow-up-long"></i> OUT</span>`;
         } else if (t.actionType === 'RESERVE') {
           actionBadge = `<span class="inline-flex items-center gap-1 bg-brandOrange text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"><i class="fa-solid fa-lock"></i> RESERVE</span>`;
         } else if (t.actionType === 'EXTERNAL') {
@@ -1809,6 +1784,27 @@
             break;
         }
 
+        const rolePerms = rolesConfig[simulatedRole];
+        let buttonsHtml = '';
+        if (rolePerms.canUpdateStatus) {
+          buttonsHtml += `
+            <button onclick="openStatusChangeModal('${t.id}', '${t.status}')" title="Change Status" class="text-brandGreen hover:text-emerald-400 bg-brandGreen/10 hover:bg-brandGreen/20 px-2 py-1 rounded text-[11px] font-bold transition-all">
+              <i class="fa-solid fa-pen-to-square"></i> Status
+            </button>
+          `;
+        }
+        if (rolePerms.canDeleteTxn) {
+          buttonsHtml += `
+            <button onclick="deleteTransaction('${t.id}')" title="Delete Permanently" class="text-brandRed hover:text-red-300 bg-brandRed/10 hover:bg-brandRed/20 px-2 py-1 rounded text-[11px] font-bold transition-all ml-1">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          `;
+        }
+
+        if (buttonsHtml === '') {
+          buttonsHtml = `<span class="text-slate-500">-</span>`;
+        }
+
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-900/10 border-b theme-border";
         tr.innerHTML = `
@@ -1822,6 +1818,7 @@
           <td class="py-3.5 px-4 theme-text">${t.responsiblePerson}</td>
           <td class="py-3.5 px-4">${statusBadge}</td>
           <td class="py-3.5 px-4 theme-text-muted" title="${t.remark || ''}">${t.remark || '-'}</td>
+          <td class="py-3.5 px-4 text-center whitespace-nowrap">${buttonsHtml}</td>
         `;
         tbody.appendChild(tr);
       });
