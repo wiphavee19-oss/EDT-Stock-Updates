@@ -128,7 +128,7 @@
       
       <!-- Logo & Dynamic Brand Image Changer -->
       <div class="flex items-center gap-3">
-        <!-- Dynamic Logo Box (สามารถคลิกแก้ไขเพื่อเปลี่ยนภาพ) -->
+        <!-- Dynamic Logo Box -->
         <div onclick="openLogoEditModal()" class="group relative cursor-pointer bg-brandGreen/10 p-2 rounded-xl border border-brandGreen/20 w-12 h-12 flex items-center justify-center overflow-hidden" title="คลิกเพื่อเปลี่ยนรูปภาพแบรนด์">
           <i id="logoFallbackIcon" class="fa-solid fa-solar-panel text-brandGreen text-2xl"></i>
           <img id="logoDynamicImage" class="absolute inset-0 w-full h-full object-cover hidden" alt="Brand Logo">
@@ -456,6 +456,7 @@
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="theme-inner border-b theme-border theme-text-muted text-[10px] font-extrabold uppercase tracking-wider">
+                <th class="py-3 px-4">Order</th>
                 <th class="py-3 px-4">SKU </th>
                 <th class="py-3 px-4">Warehouse</th>
                 <th class="py-3 px-4">Category</th>
@@ -490,8 +491,10 @@
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="theme-inner border-b theme-border theme-text-muted text-[10px] font-extrabold uppercase tracking-wider">
+                <th class="py-3 px-4 text-center">Order</th>
                 <th class="py-3 px-4">Place</th>
                 <th class="py-3 px-4">Warehouse Name</th>
+                <th class="py-3 px-4 text-center">Status</th>
                 <th class="py-3 px-4 text-center">Setting</th>
               </tr>
             </thead>
@@ -556,7 +559,7 @@
       <form id="stockUpdateForm" onsubmit="handleStockTransactionSubmit(event)" class="p-6 space-y-4">
         <div class="grid grid-cols-2 gap-4">
           
-          <!-- Action Type Selector (เปลี่ยนเป็น 5 ตัวเลือกที่ครอบคลุมยอดยกมาต้นเดือน) -->
+          <!-- Action Type Selector -->
           <div class="col-span-2">
             <label class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">Select Warehouse Transaction Type *</label>
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -697,20 +700,28 @@
       </div>
       <form id="productForm" onsubmit="handleProductSubmit(event)" class="p-6 space-y-4">
         <input type="hidden" id="editProductId">
-        <div>
-          <label for="prodWarehouse" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Warehouse *</label>
-          <select id="prodWarehouse" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
-            <!-- Dynamically populated -->
-          </select>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label for="prodWarehouse" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Warehouse *</label>
+            <select id="prodWarehouse" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div>
+            <label for="prodCategory" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Category  *</label>
+            <select id="prodCategory" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
+              <option value="Solar Panel">Solar Panel </option>
+              <option value="Inverter">Inverter </option>
+              <option value="Accessory">Accessory </option>
+            </select>
+          </div>
+          <div>
+            <label for="prodOrder" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">ลำดับแสดงผล (Order)</label>
+            <input type="number" id="prodOrder" value="1" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
+          </div>
         </div>
-        <div>
-          <label for="prodCategory" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Category  *</label>
-          <select id="prodCategory" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
-            <option value="Solar Panel">Solar Panel </option>
-            <option value="Inverter">Inverter </option>
-            <option value="Accessory">Accessory </option>
-          </select>
-        </div>
+
         <div>
           <label for="prodBrand" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Brand *</label>
           <input type="text" id="prodBrand" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น JinkoSolar">
@@ -727,6 +738,7 @@
           <label for="prodCode" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">SKU/CODE *</label>
           <input type="text" id="prodCode" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น JINKO-435-TN">
         </div>
+        
         <div class="border-t theme-border pt-4 mt-6 flex justify-end gap-3">
           <button type="button" onclick="closeProductModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">Cancel</button>
           <button type="submit" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">Save Record</button>
@@ -746,10 +758,25 @@
       </div>
       <form id="warehouseForm" onsubmit="handleWarehouseSubmit(event)" class="p-6 space-y-4">
         <input type="hidden" id="editWarehouseId">
+        
         <div>
           <label for="whName" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">Warehouse Name *</label>
           <input type="text" id="whName" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="Location: Bangkok,Chonburi">
         </div>
+        
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <label for="whOrder" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1">ลำดับ (Order)</label>
+            <input type="number" id="whOrder" value="1" required class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="1, 2, 3...">
+          </div>
+          <div class="flex items-center justify-start pt-5">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="whIsHidden" class="w-4 h-4 accent-brandRed rounded bg-slate-800 border-gray-600">
+              <span class="text-xs theme-text-muted font-bold text-brandRed">ซ่อนโกดังนี้ (Hide)</span>
+            </label>
+          </div>
+        </div>
+
         <div class="border-t theme-border pt-4 mt-6 flex justify-end gap-3">
           <button type="button" onclick="closeWarehouseModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">Cancel</button>
           <button type="submit" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition-all">Add Warehouse</button>
@@ -933,7 +960,8 @@
       // 1. Listen for Master Warehouses
       const whQuery = query(getCollectionRef('warehouses'));
       onSnapshot(whQuery, async (snapshot) => {
-        warehouses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        warehouses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                     .sort((a, b) => (parseInt(a.order) || 0) - (parseInt(b.order) || 0)); // เรียงลำดับ
         
         // If empty database, check seed data
         if (warehouses.length === 0) {
@@ -952,7 +980,8 @@
       // 2. Listen for Master Products
       const prodQuery = query(getCollectionRef('products'));
       onSnapshot(prodQuery, (snapshot) => {
-        products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                   .sort((a, b) => (parseInt(a.order) || 0) - (parseInt(b.order) || 0)); // เรียงลำดับ
         populateDropdowns();
         renderProductsTable();
         renderDashboard();
@@ -1098,38 +1127,38 @@
 
       // Default warehouses
       const whs = [
-        { id: 'sbs_wh', name: 'SBS Warehouse' },
-        { id: 'edt_wh', name: 'EDT Warehouse' },
-        { id: 'bkk_wh', name: 'Bangkok Warehouse' },
-        { id: 'chonburi_wh', name: 'Chonburi Warehouse' }
+        { id: 'sbs_wh', name: 'SBS Warehouse', order: 1, isHidden: false },
+        { id: 'edt_wh', name: 'EDT Warehouse', order: 2, isHidden: false },
+        { id: 'bkk_wh', name: 'Bangkok Warehouse', order: 3, isHidden: false },
+        { id: 'chonburi_wh', name: 'Chonburi Warehouse', order: 4, isHidden: false }
       ];
 
       whs.forEach(w => {
         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'warehouses', w.id);
-        batch.set(docRef, { name: w.name });
+        batch.set(docRef, { name: w.name, order: w.order, isHidden: w.isHidden });
       });
 
       // Default products
       const prods = [
-        { id: 'rec_410', category: 'Solar Panel', brand: 'REC Solar', model: 'REC410TP5 Black', wattage: 410, code: 'REC410TP5', warehouseId: 'sbs_wh' },
-        { id: 'cs_555', category: 'Solar Panel', brand: 'Canadian Solar', model: 'CS6W-555MS Bifacial', wattage: 555, code: 'CS6W-555MS', warehouseId: 'sbs_wh' },
-        { id: 'cs_720', category: 'Solar Panel', brand: 'Canadian Solar', model: 'CS7N-720W HighPower', wattage: 720, code: 'CS7N-720W', warehouseId: 'edt_wh' },
-        { id: 'jinko_435', category: 'Solar Panel', brand: 'Jinko Solar', model: 'JKM435N Tiger Neo', wattage: 435, code: 'JKM435-TN', warehouseId: 'chonburi_wh' },
-        { id: 'huawei_5k', category: 'Inverter', brand: 'Huawei', model: 'SUN2000-5KTL-L1', wattage: 5000, code: 'HW-5KTL', warehouseId: 'bkk_wh' },
-        { id: 'cable_4mm', category: 'Accessory', brand: 'Link', model: 'PV Cable 4mm (100m)', wattage: 0, code: 'CBL-4MM-100', warehouseId: 'bkk_wh' }
+        { id: 'rec_410', category: 'Solar Panel', brand: 'REC Solar', model: 'REC410TP5 Black', wattage: 410, code: 'REC410TP5', warehouseId: 'sbs_wh', order: 1 },
+        { id: 'cs_555', category: 'Solar Panel', brand: 'Canadian Solar', model: 'CS6W-555MS Bifacial', wattage: 555, code: 'CS6W-555MS', warehouseId: 'sbs_wh', order: 2 },
+        { id: 'cs_720', category: 'Solar Panel', brand: 'Canadian Solar', model: 'CS7N-720W HighPower', wattage: 720, code: 'CS7N-720W', warehouseId: 'edt_wh', order: 3 },
+        { id: 'jinko_435', category: 'Solar Panel', brand: 'Jinko Solar', model: 'JKM435N Tiger Neo', wattage: 435, code: 'JKM435-TN', warehouseId: 'chonburi_wh', order: 4 },
+        { id: 'huawei_5k', category: 'Inverter', brand: 'Huawei', model: 'SUN2000-5KTL-L1', wattage: 5000, code: 'HW-5KTL', warehouseId: 'bkk_wh', order: 5 },
+        { id: 'cable_4mm', category: 'Accessory', brand: 'Link', model: 'PV Cable 4mm (100m)', wattage: 0, code: 'CBL-4MM-100', warehouseId: 'bkk_wh', order: 6 }
       ];
 
       prods.forEach(p => {
         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'products', p.id);
-        batch.set(docRef, { category: p.category || 'Solar Panel', brand: p.brand, model: p.model, wattage: p.wattage, code: p.code, warehouseId: p.warehouseId });
+        batch.set(docRef, { category: p.category || 'Solar Panel', brand: p.brand, model: p.model, wattage: p.wattage, code: p.code, warehouseId: p.warehouseId, order: p.order });
       });
 
-      // Seed initial inventories
+      // Seed initial inventories (Set Beginning to 0)
       const initialStock = [
-        { wh: 'sbs_wh', prod: 'rec_410', current: 150, reserved: 60, beginning: 100 }, 
-        { wh: 'sbs_wh', prod: 'cs_555', current: 300, reserved: 20, beginning: 250 },  
-        { wh: 'edt_wh', prod: 'cs_720', current: 450, reserved: 0, beginning: 400 },   
-        { wh: 'chonburi_wh', prod: 'jinko_435', current: 100, reserved: 15, beginning: 90 } 
+        { wh: 'sbs_wh', prod: 'rec_410', current: 150, reserved: 60, beginning: 0 }, 
+        { wh: 'sbs_wh', prod: 'cs_555', current: 300, reserved: 20, beginning: 0 },  
+        { wh: 'edt_wh', prod: 'cs_720', current: 450, reserved: 0, beginning: 0 },   
+        { wh: 'chonburi_wh', prod: 'jinko_435', current: 100, reserved: 15, beginning: 0 } 
       ];
 
       initialStock.forEach(stock => {
@@ -1147,7 +1176,6 @@
       // Seed historical records for instant graphing
       const todayString = new Date().toISOString().split('T')[0];
       const initialTxns = [
-        { date: todayString, time: '09:00', productId: 'rec_410', warehouseId: 'sbs_wh', actionType: 'BEGINNING', quantity: 100, customerName: 'ระบบเริ่มต้น', doNumber: 'INIT-06', responsiblePerson: 'System', status: 'Completed', remark: 'ยอดยกมาประจำต้นเดือนของ REC410' },
         { date: todayString, time: '09:15', productId: 'rec_410', warehouseId: 'sbs_wh', actionType: 'IN', quantity: 50, customerName: '', doNumber: 'RECV-1110', responsiblePerson: 'Mr. Anan', status: 'Completed', remark: 'นำเข้าเพิ่มเติมระหว่างรอบบิล' },
         { date: todayString, time: '10:30', productId: 'rec_410', warehouseId: 'sbs_wh', actionType: 'RESERVE', quantity: 60, customerName: 'Apex Solar Farm', doNumber: 'RSV-00192', responsiblePerson: 'Sarah Lin', status: 'Reserved', remark: 'เปิดจองสำหรับขยายเฟสไฟฟ้าเพิ่มเติม' },
         { date: todayString, time: '11:00', productId: 'cs_555', warehouseId: 'sbs_wh', actionType: 'IN', quantity: 300, customerName: '', doNumber: 'RECV-1111', responsiblePerson: 'Somsak W.', status: 'Completed', remark: 'นำเข้าสต็อก Regular' },
@@ -1191,10 +1219,13 @@
       });
 
       warehouses.forEach(w => {
-        txnWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}</option>`;
-        filterWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}</option>`;
-        if (prodWarehouseSelect) prodWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}</option>`;
-        if (catalogWarehouseFilter) catalogWarehouseFilter.innerHTML += `<option value="${w.id}">${w.name}</option>`;
+        // สำหรับหน้าทำรายการ (Transaction) ให้ซ่อนโกดังที่ถูกปิดไว้
+        if (!w.isHidden) {
+          txnWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}</option>`;
+        }
+        filterWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}${w.isHidden ? ' (Hidden)' : ''}</option>`;
+        if (prodWarehouseSelect) prodWarehouseSelect.innerHTML += `<option value="${w.id}">${w.name}${w.isHidden ? ' (Hidden)' : ''}</option>`;
+        if (catalogWarehouseFilter) catalogWarehouseFilter.innerHTML += `<option value="${w.id}">${w.name}${w.isHidden ? ' (Hidden)' : ''}</option>`;
       });
     };
 
@@ -1278,7 +1309,7 @@
       let stockInTodayCount = 0;
       let stockOutTodayCount = 0;
       let reservedTodayCount = 0;
-      let totalBeginningStock = 0; // ยอดสะสมเริ่มต้นต้นเดือนรวมทุกสาขา
+      let totalBeginningStock = 0;
 
       const localStock = {};
 
@@ -1292,17 +1323,25 @@
           reservedStock: item.reservedStock || 0,
           beginningStock: item.beginningStock || 0 
         };
-        totalBeginningStock += parseInt(item.beginningStock || 0);
+        
+        // เราจะไม่เอาโกดังที่ถูกซ่อนมารวมในยอดสรุปด้านบน
+        const whObj = warehouses.find(w => w.id === item.warehouseId);
+        if (whObj && !whObj.isHidden) {
+          totalBeginningStock += parseInt(item.beginningStock || 0);
+        }
       });
 
       transactions.forEach(t => {
         if (t.date === todayStr && t.status !== 'Cancelled') {
-          if (t.actionType === 'IN' || t.actionType === 'EXTERNAL') {
-            stockInTodayCount += parseInt(t.quantity || 0);
-          } else if (t.actionType === 'OUT') {
-            stockOutTodayCount += parseInt(t.quantity || 0);
-          } else if (t.actionType === 'RESERVE') {
-            reservedTodayCount += parseInt(t.quantity || 0);
+          const whObj = warehouses.find(w => w.id === t.warehouseId);
+          if (whObj && !whObj.isHidden) {
+            if (t.actionType === 'IN' || t.actionType === 'EXTERNAL') {
+              stockInTodayCount += parseInt(t.quantity || 0);
+            } else if (t.actionType === 'OUT') {
+              stockOutTodayCount += parseInt(t.quantity || 0);
+            } else if (t.actionType === 'RESERVE') {
+              reservedTodayCount += parseInt(t.quantity || 0);
+            }
           }
         }
       });
@@ -1312,7 +1351,10 @@
       document.getElementById('kpi-stock-out').textContent = stockOutTodayCount.toLocaleString();
       document.getElementById('kpi-reserved').textContent = reservedTodayCount.toLocaleString();
 
-      warehouses.forEach(wh => {
+      // กรองเอาโกดังที่ถูกตั้งค่าให้ซ่อน (isHidden: true) ออกไป ไม่นำมาแสดงใน Dashboard
+      const visibleWarehouses = warehouses.filter(w => !w.isHidden);
+
+      visibleWarehouses.forEach(wh => {
         const whStock = localStock[wh.id] || {};
         
         let productsForThisWarehouse = products.filter(p => {
@@ -1380,7 +1422,7 @@
                   <div class="space-y-1 flex-1">
                     <div class="flex flex-wrap items-center gap-2">
                       <span class="text-xs font-bold theme-text">${prod.code}</span>
-                      <span class="text-[10px] text-white font-semibold bg-slate-800 px-2 py-0.5 rounded">${prod.category || 'Solar Panel'}</span>
+                      <span class="text-[10px] text-white font-semibold bg-slate-800 px-2 py-0.5 rounded whitespace-nowrap">${prod.category || 'Solar Panel'}</span>
                       ${prod.wattage > 0 ? `<span class="text-[10px] theme-text-muted font-semibold bg-brandGreen/10 px-2 py-0.5 rounded">${prod.wattage}W</span>` : ''}
                     </div>
                     <p class="text-[11px] theme-text-muted leading-tight">${prod.brand} • ${prod.model}</p>
@@ -1439,6 +1481,9 @@
       todayTxns.forEach(t => {
         const matchedProd = products.find(p => p.id === t.productId) || { code: 'Unknown', model: '' };
         const matchedWh = warehouses.find(w => w.id === t.warehouseId) || { name: 'Unknown' };
+
+        // ถ้าโกดังซ่อนอยู่ ไม่แสดงใน daily transactions ก็ได้ แต่โชว์ไว้ดีกว่าเพื่อให้รู้ว่ามีการอัปเดต (หรือแล้วแต่ความต้องการ)
+        // แสดงทั้งหมดในประวัติ
 
         let actionBadge = '';
         if (t.actionType === 'IN') {
@@ -1967,6 +2012,7 @@
           document.getElementById('editProductId').value = p.id;
           document.getElementById('prodWarehouse').value = p.warehouseId || (warehouses.length > 0 ? warehouses[0].id : '');
           document.getElementById('prodCategory').value = p.category || 'Solar Panel';
+          document.getElementById('prodOrder').value = p.order || 1;
           document.getElementById('prodBrand').value = p.brand;
           document.getElementById('prodModel').value = p.model;
           document.getElementById('prodWattage').value = p.wattage;
@@ -1992,6 +2038,7 @@
       const id = document.getElementById('editProductId').value;
       const warehouseId = document.getElementById('prodWarehouse').value;
       const category = document.getElementById('prodCategory').value;
+      const order = parseInt(document.getElementById('prodOrder').value) || 1;
       const brand = document.getElementById('prodBrand').value.trim();
       const model = document.getElementById('prodModel').value.trim();
       const wattage = parseInt(document.getElementById('prodWattage').value) || 0;
@@ -1999,10 +2046,10 @@
 
       try {
         if (id) {
-          await updateDoc(getDocRef('products', id), { warehouseId, category, brand, model, wattage, code });
+          await updateDoc(getDocRef('products', id), { warehouseId, category, order, brand, model, wattage, code });
           showToast("บันทึกอัปเดตโมเดลเรียบร้อยแล้ว", "success");
         } else {
-          await addDoc(getCollectionRef('products'), { warehouseId, category, brand, model, wattage, code });
+          await addDoc(getCollectionRef('products'), { warehouseId, category, order, brand, model, wattage, code });
           showToast("เพิ่มสินค้ารายการใหม่ลงทะเบียนหลักสำเร็จ!", "success");
         }
         closeProductModal();
@@ -2055,9 +2102,10 @@
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-900/10 border-b theme-border";
         tr.innerHTML = `
+          <td class="py-3.5 px-4 font-mono theme-text text-center">${p.order || '-'}</td>
           <td class="py-3.5 px-4 font-mono font-bold text-brandGreen">${p.code}</td>
           <td class="py-3.5 px-4 theme-text">${matchedWh.name}</td>
-          <td class="py-3.5 px-4 theme-text font-medium"><span class="bg-slate-800 text-white px-2 py-1 rounded text-[10px]">${p.category || 'Solar Panel'}</span></td>
+          <td class="py-3.5 px-4 theme-text font-medium"><span class="bg-slate-800 text-white px-2 py-1 rounded text-[10px] whitespace-nowrap">${p.category || 'Solar Panel'}</span></td>
           <td class="py-3.5 px-4 theme-text font-medium">${p.brand}</td>
           <td class="py-3.5 px-4 theme-text">${p.model}</td>
           <td class="py-3.5 px-4 theme-text-muted font-mono font-bold">${p.wattage > 0 ? p.wattage + ' W' : '-'}</td>
@@ -2085,6 +2133,8 @@
         if (wh) {
           document.getElementById('warehouseModalTitle').textContent = "Edit Warehouse";
           document.getElementById('editWarehouseId').value = wh.id;
+          document.getElementById('whOrder').value = wh.order || 1;
+          document.getElementById('whIsHidden').checked = wh.isHidden || false;
           document.getElementById('whName').value = wh.name;
         }
       } else {
@@ -2102,14 +2152,16 @@
       event.preventDefault();
 
       const id = document.getElementById('editWarehouseId').value;
+      const order = parseInt(document.getElementById('whOrder').value) || 1;
+      const isHidden = document.getElementById('whIsHidden').checked;
       const name = document.getElementById('whName').value.trim();
 
       try {
         if (id) {
-          await updateDoc(getDocRef('warehouses', id), { name });
+          await updateDoc(getDocRef('warehouses', id), { name, order, isHidden });
           showToast("ปรับปรุงสาขาคลังแล้ว", "success");
         } else {
-          await addDoc(getCollectionRef('warehouses'), { name });
+          await addDoc(getCollectionRef('warehouses'), { name, order, isHidden });
           showToast("ลงทะเบียนพิกัดจัดเก็บใหม่สำเร็จเรียบร้อย!", "success");
         }
         closeWarehouseModal();
@@ -2152,12 +2204,18 @@
             <button onclick="deleteWarehouse('${w.id}')" class="text-brandRed hover:text-red-300 font-bold"><i class="fa-solid fa-trash-can"></i> Delete</button>
           `;
         }
+        
+        let statusHtml = w.isHidden 
+          ? '<span class="bg-brandRed/10 text-brandRed px-2 py-1 rounded text-[10px] font-bold">Hidden</span>'
+          : '<span class="bg-brandGreen/10 text-brandGreen px-2 py-1 rounded text-[10px] font-bold">Visible</span>';
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-900/10 border-b theme-border";
         tr.innerHTML = `
+          <td class="py-3.5 px-4 font-mono theme-text text-center">${w.order || '-'}</td>
           <td class="py-3.5 px-4 font-mono text-slate-500">${w.id}</td>
           <td class="py-3.5 px-4 theme-text font-bold">${w.name}</td>
+          <td class="py-3.5 px-4 text-center">${statusHtml}</td>
           <td class="py-3.5 px-4 text-center whitespace-nowrap">${actions}</td>
         `;
         tbody.appendChild(tr);
