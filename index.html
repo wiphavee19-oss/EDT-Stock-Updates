@@ -104,7 +104,8 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<!-- จุดแก้ไขที่ 1: เพิ่มคลาส light-theme เพื่อเป็นธีมเริ่มต้นแบบสว่าง -->
+<body class="min-h-screen flex flex-col antialiased light-theme">
 
   <!-- Splash Screen / Loader -->
   <div id="splashScreen" class="fixed inset-0 bg-brandDark z-50 flex flex-col items-center justify-center transition-all duration-500">
@@ -164,7 +165,8 @@
       <div class="flex items-center gap-3">
         <!-- Light / Dark Mode Toggle Button -->
         <button onclick="toggleTheme()" class="bg-slate-800 border theme-border text-slate-100 p-2 rounded-lg hover:bg-slate-700 transition-all flex items-center justify-center w-9 h-9" title="สลับโหมด สีขาว/สีมืด">
-          <i id="themeToggleIcon" class="fa-solid fa-sun text-amber-400 text-sm"></i>
+          <!-- จุดแก้ไขที่ 2: เปลี่ยนไอคอนปุ่มสลับธีมเริ่มต้นเป็นรูปพระจันทร์ (เพื่อกดสลับไปธีมมืด) -->
+          <i id="themeToggleIcon" class="fa-solid fa-moon text-indigo-500 text-sm"></i>
         </button>
 
         <div class="flex items-center gap-2">
@@ -212,7 +214,7 @@
       <!-- Top KPIs Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
-        <!-- KPI: ยอดยกมาต้นเดือน -->
+        <!-- KPI: ยоดยกมาต้นเดือน -->
         <div class="theme-card border rounded-2xl p-6 relative overflow-hidden shadow-md">
           <div class="absolute top-0 right-0 p-4 opacity-10">
             <i class="fa-solid fa-boxes-packing text-6xl text-brandPurple"></i>
@@ -873,7 +875,7 @@
     let transactions = [];
     let simulatedRole = 'Admin'; // Default role is Admin
     let currentHistoryTimeframe = 'daily';
-    let currentTheme = 'dark'; // เริ่มต้นที่ธีมมืด
+    let currentTheme = 'light'; // จุดแก้ไขที่ 3: กำหนดธีมเริ่มต้นของระบบเป็น Light Theme
 
     // ----------------------------------------------------
     // ROLE ACCESS MANAGEMENT SYSTEM
@@ -1481,9 +1483,6 @@
       todayTxns.forEach(t => {
         const matchedProd = products.find(p => p.id === t.productId) || { code: 'Unknown', model: '' };
         const matchedWh = warehouses.find(w => w.id === t.warehouseId) || { name: 'Unknown' };
-
-        // ถ้าโกดังซ่อนอยู่ ไม่แสดงใน daily transactions ก็ได้ แต่โชว์ไว้ดีกว่าเพื่อให้รู้ว่ามีการอัปเดต (หรือแล้วแต่ความต้องการ)
-        // แสดงทั้งหมดในประวัติ
 
         let actionBadge = '';
         if (t.actionType === 'IN') {
