@@ -14,12 +14,15 @@
           colors: {
             brandDark: '#0F172A',
             brandCard: '#1E293B',
-            brandGreen: '#22C55E',
+            brandGreen: 'rgb(var(--color-primary) / <alpha-value>)',
             brandOrange: '#F97316',
             brandRed: '#EF4444',
             brandBlue: '#3B82F6', 
             brandPurple: '#8B5CF6', //B/F
-            brandBorder: '#334155'
+            brandBorder: '#334155',
+            emerald: {
+              400: 'rgb(var(--color-primary-hover) / <alpha-value>)'
+            }
           }
         }
       }
@@ -44,6 +47,8 @@
       --border-color: #334155;
       --bg-inner: #090D16;
       --header-bg: #1E293B;
+      --color-primary: 34 197 94; /* Green */
+      --color-primary-hover: 52 211 153;
     }
 
     body.light-theme {
@@ -54,6 +59,32 @@
       --border-color: #E2E8F0;
       --bg-inner: #F8FAFC;
       --header-bg: #FFFFFF;
+      --color-primary: 34 197 94; /* Green */
+      --color-primary-hover: 52 211 153;
+    }
+
+    body.midnight-theme {
+      --bg-dark: #000000;
+      --bg-card: #0A0A0A;
+      --text-main: #EDEDED;
+      --text-muted: #737373;
+      --border-color: #262626;
+      --bg-inner: #050505;
+      --header-bg: #0A0A0A;
+      --color-primary: 250 204 21; /* Yellow */
+      --color-primary-hover: 253 224 71;
+    }
+
+    body.navy-theme {
+      --bg-dark: #030B14;
+      --bg-card: #0A192F;
+      --text-main: #E6F1FF;
+      --text-muted: #8892B0;
+      --border-color: #112240;
+      --bg-inner: #020C1B;
+      --header-bg: #0A192F;
+      --color-primary: 250 204 21; /* Yellow */
+      --color-primary-hover: 253 224 71;
     }
 
     body {
@@ -519,11 +550,24 @@
           <!-- Theme Toggle -->
           <div class="theme-inner border theme-border p-4 rounded-xl flex items-center justify-between">
             <div>
-              <h4 class="text-sm font-bold theme-text">Change Theme</h4>
-              <p class="text-[10px] theme-text-muted">System Light/Dark Mode</p>
+              <h4 class="text-sm font-bold theme-text">System Theme</h4>
+              <p class="text-[10px] theme-text-muted">เลือกโทนสี (4 ธีม)</p>
             </div>
-            <button onclick="toggleTheme()" class="bg-slate-800 border theme-border text-slate-100 p-2 rounded-lg hover:bg-slate-700 transition-all flex items-center justify-center w-10 h-10 shadow-md">
-              <i class="fa-solid fa-sun text-amber-400"></i>
+            <div class="flex items-center gap-2">
+              <button onclick="setTheme('light')" class="w-8 h-8 rounded-full border-2 border-slate-300 bg-white hover:scale-110 transition-transform shadow-md" title="Light Theme"></button>
+              <button onclick="setTheme('dark')" class="w-8 h-8 rounded-full border-2 border-slate-600 bg-slate-800 hover:scale-110 transition-transform shadow-md" title="Dark Slate"></button>
+              <button onclick="setTheme('midnight')" class="w-8 h-8 rounded-full border-2 border-slate-700 bg-black hover:scale-110 transition-transform shadow-md" title="Midnight Black"></button>
+              <button onclick="setTheme('navy')" class="w-8 h-8 rounded-full border-2 border-blue-800 bg-[#0A192F] hover:scale-110 transition-transform shadow-md" title="Navy Blue"></button>
+            </div>
+          </div>
+          <!-- Recalibrate Opening Stock -->
+          <div class="theme-inner border border-amber-500/30 p-4 rounded-xl flex items-center justify-between mt-4 mb-4">
+            <div>
+              <h4 class="text-sm font-bold text-amber-500">คำนวณยอดยกมาใหม่</h4>
+              <p class="text-[10px] text-amber-500/70">รีเซ็ตยอดยกมาให้ตรงกับสต็อกพร้อมขายปัจจุบัน (Available)</p>
+            </div>
+            <button onclick="recalibrateOpeningStock()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition-all flex items-center gap-2 shadow-md">
+              <i class="fa-solid fa-calculator"></i> คำนวณใหม่
             </button>
           </div>
           <!-- Clear Data -->
@@ -801,13 +845,29 @@
         <p class="text-xs theme-text-muted">Reprocess Stock:</p>
         <div>
           <label for="newStatusVal" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">Update Status</label>
-          <select id="newStatusVal" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
+          <select id="newStatusVal" onchange="toggleStatusExtraFields()" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen">
             <option value="Completed">Completed</option>
             <option value="Pending">Pending</option>
             <option value="Reserved">Reserved</option>
             <option value="Delivered">Delivered</option>
             <option value="Cancelled">Cancelled</option>
           </select>
+        </div>
+
+        <div id="statusExtraFields" class="hidden space-y-4 border-t theme-border pt-4">
+          <p class="text-[10px] theme-text-muted italic">ระบุข้อมูลเพิ่มเติมเมื่อลูกค้ามารับของ (Optional)</p>
+          <div>
+            <label for="statusNewQty" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">Actual Qty (รับจริง)</label>
+            <input type="number" id="statusNewQty" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="ปล่อยว่างถ้ารับครบตามจำนวนจอง">
+          </div>
+          <div>
+            <label for="statusNewDo" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">DO / Invoice No.</label>
+            <input type="text" id="statusNewDo" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เลขที่เอกสารอ้างอิง">
+          </div>
+          <div>
+            <label for="statusNewRemark" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1.5">Additional Remark</label>
+            <input type="text" id="statusNewRemark" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="หมายเหตุเพิ่มเติม">
+          </div>
         </div>
         <div class="border-t theme-border pt-4 flex justify-end gap-3">
           <button onclick="closeStatusChangeModal()" class="px-4 py-2 border theme-border theme-text-muted hover:text-white rounded-lg text-xs font-semibold">Cancel</button>
@@ -920,6 +980,73 @@
     const addWarehouseBtn = document.getElementById('addWarehouseBtn');
 
     // ----------------------------------------------------
+    // AUTO MONTHLY ROLLOVER (BEGINNING STOCK)
+    // ----------------------------------------------------
+    const checkAndRunMonthlyRollover = async () => {
+      try {
+        const today = new Date();
+        const currentMonthYear = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+        
+        const rolloverRef = getDocRef('system', 'monthlyRollover');
+        const rolloverDoc = await getDoc(rolloverRef);
+        
+        if (rolloverDoc.exists() && rolloverDoc.data().lastRolloverMonth === currentMonthYear) {
+          console.log("เดือนนี้มีการบันทึกยอดยกมาเรียบร้อยแล้ว");
+          return;
+        }
+
+        console.log("เริ่มกระบวนการตัดยอดอัตโนมัติสำหรับเดือน: ", currentMonthYear);
+        const batch = writeBatch(db);
+
+        const invQuery = query(getCollectionRef('inventory'));
+        const invSnapshot = await getDocs(invQuery);
+        
+        invSnapshot.forEach((invDoc) => {
+          const invData = invDoc.data();
+          const current = parseInt(invData.currentStock || 0);
+          const reserved = parseInt(invData.reservedStock || 0);
+          const availableStock = current - reserved;
+          
+          if (availableStock >= 0) {
+            const newTxnRef = doc(getCollectionRef('transactions'));
+            batch.set(newTxnRef, {
+              date: today.toISOString().split('T')[0],
+              time: today.toTimeString().split(' ')[0].substring(0, 5),
+              productId: invData.productId,
+              warehouseId: invData.warehouseId,
+              actionType: 'BEGINNING',
+              quantity: availableStock,
+              customerName: 'System Auto',
+              doNumber: '-',
+              responsiblePerson: 'Auto-Rollover',
+              status: 'Completed',
+              remark: `Auto Brought Forward for ${currentMonthYear} (Available)`,
+              timestamp: serverTimestamp()
+            });
+
+            batch.set(invDoc.ref, {
+              beginningStock: availableStock
+            }, { merge: true });
+          }
+        });
+
+        batch.set(rolloverRef, { 
+          lastRolloverMonth: currentMonthYear,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+
+        await batch.commit();
+        console.log("บันทึกยอดยกมาอัตโนมัติสำเร็จ!");
+        
+        if (typeof window.showToast === 'function') {
+            window.showToast("อัปเดตยอดยกมาของเดือนใหม่เรียบร้อยแล้ว!", "success");
+        }
+      } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการตัดยอดอัตโนมัติ: ", error);
+      }
+    };
+
+    // ----------------------------------------------------
     // SYSTEM INITIALIZATION & REAL-TIME LISTENERS
     // ----------------------------------------------------
     window.onload = async () => {
@@ -940,6 +1067,7 @@
           user = authUser;
           activeRoleLabel.textContent = `User: ${user.uid.substring(0, 8)} (${simulatedRole})`;
           initRealtimeSync();
+          checkAndRunMonthlyRollover();
         } else {
           splashScreen.classList.remove('hidden');
         }
@@ -1096,27 +1224,41 @@
     // ----------------------------------------------------
     // LIGHT & DARK THEME SWITCHER
     // ----------------------------------------------------
-    window.toggleTheme = () => {
+    const themeList = ['light', 'dark', 'midnight', 'navy'];
+    
+    window.setTheme = (themeName) => {
       const body = document.body;
       const themeToggleIcon = document.getElementById('themeToggleIcon');
-
-      if (currentTheme === 'dark') {
-        body.classList.add('light-theme');
-        themeToggleIcon.className = "fa-solid fa-moon text-indigo-500 text-sm";
-        currentTheme = 'light';
-        showToast("เปลี่ยนเป็นโหมดสีขาวพรีเมียม", "info");
-      } else {
-        body.classList.remove('light-theme');
-        themeToggleIcon.className = "fa-solid fa-sun text-amber-400 text-sm";
-        currentTheme = 'dark';
-        showToast("เปลี่ยนเป็นโหมดสีมืดสลัว", "info");
+      
+      body.classList.remove('light-theme', 'midnight-theme', 'navy-theme');
+      
+      if (themeName !== 'dark') {
+        body.classList.add(`${themeName}-theme`);
       }
+      
+      currentTheme = themeName;
+      
+      if (themeToggleIcon) {
+        if (themeName === 'light') themeToggleIcon.className = "fa-solid fa-moon text-indigo-500 text-sm";
+        else if (themeName === 'dark') themeToggleIcon.className = "fa-solid fa-sun text-amber-400 text-sm";
+        else if (themeName === 'midnight') themeToggleIcon.className = "fa-solid fa-star text-purple-400 text-sm";
+        else if (themeName === 'navy') themeToggleIcon.className = "fa-solid fa-water text-blue-400 text-sm";
+      }
+
+      showToast(`เปลี่ยนเป็นธีม ${themeName.toUpperCase()}`, "info");
 
       renderDashboard();
       renderProductsTable();
       renderWarehousesTable();
       renderDailyTransactions();
       applyHistoryFilters();
+    };
+
+    window.toggleTheme = () => {
+      let currentIndex = themeList.indexOf(currentTheme);
+      if (currentIndex === -1) currentIndex = 0;
+      const nextIndex = (currentIndex + 1) % themeList.length;
+      setTheme(themeList[nextIndex]);
     };
 
     // ----------------------------------------------------
@@ -1650,8 +1792,8 @@
         doInput.required = true;
       } else if (action === 'BEGINNING') {
         statusSelector.value = 'Completed';
-        customerLabel.textContent = 'Note / Reason *';
-        customerInput.required = true;
+        customerLabel.textContent = 'Note / Reason (Optional)';
+        customerInput.required = false;
         doLabel.textContent = 'Previous Period Doc (Optional)';
         doInput.required = false;
       } else {
@@ -1898,9 +2040,25 @@
     // ----------------------------------------------------
     // LIVE TIMELINE TRANSACTIONS: STATUS MODIFICATION SYSTEM
     // ----------------------------------------------------
+    window.toggleStatusExtraFields = () => {
+      const statusVal = document.getElementById('newStatusVal').value;
+      const extraFields = document.getElementById('statusExtraFields');
+      if (extraFields) {
+        if (statusVal === 'Delivered' || statusVal === 'Completed') {
+          extraFields.classList.remove('hidden');
+        } else {
+          extraFields.classList.add('hidden');
+        }
+      }
+    };
+
     window.openStatusChangeModal = (txnId, currentStatus) => {
       document.getElementById('statusChangeTxnId').value = txnId;
       document.getElementById('newStatusVal').value = currentStatus;
+      if (document.getElementById('statusNewQty')) document.getElementById('statusNewQty').value = '';
+      if (document.getElementById('statusNewDo')) document.getElementById('statusNewDo').value = '';
+      if (document.getElementById('statusNewRemark')) document.getElementById('statusNewRemark').value = '';
+      toggleStatusExtraFields();
       document.getElementById('statusChangeModal').classList.remove('hidden');
     };
 
@@ -1911,6 +2069,9 @@
     window.applyStatusChange = async () => {
       const txnId = document.getElementById('statusChangeTxnId').value;
       const targetNewStatus = document.getElementById('newStatusVal').value;
+      const newQtyInput = document.getElementById('statusNewQty') ? document.getElementById('statusNewQty').value : '';
+      const newDoInput = document.getElementById('statusNewDo') ? document.getElementById('statusNewDo').value : '';
+      const newRemarkInput = document.getElementById('statusNewRemark') ? document.getElementById('statusNewRemark').value : '';
 
       if (!txnId) return;
 
@@ -1926,8 +2087,15 @@
         const txnData = snapshot.data();
         const originalStatus = txnData.status;
 
+        const actualDeliveredQty = newQtyInput !== '' ? parseInt(newQtyInput) : txnData.quantity;
+
         const batch = writeBatch(db);
-        batch.update(txnDocRef, { status: targetNewStatus });
+        const txnUpdateData = { status: targetNewStatus };
+        if (newDoInput !== '') txnUpdateData.doNumber = newDoInput;
+        if (newRemarkInput !== '') txnUpdateData.remark = newRemarkInput;
+        if (newQtyInput !== '') txnUpdateData.quantity = actualDeliveredQty;
+
+        batch.update(txnDocRef, txnUpdateData);
 
         const invKey = `${txnData.warehouseId}_${txnData.productId}`;
         const invDocRef = getDocRef('inventory', invKey);
@@ -1935,7 +2103,7 @@
         if (txnData.actionType === 'RESERVE') {
           if (originalStatus === 'Reserved' && (targetNewStatus === 'Delivered' || targetNewStatus === 'Completed')) {
             batch.set(invDocRef, {
-              currentStock: increment(-txnData.quantity),
+              currentStock: increment(-actualDeliveredQty),
               reservedStock: increment(-txnData.quantity)
             }, { merge: true });
           } 
@@ -2246,6 +2414,42 @@
         `;
         tbody.appendChild(tr);
       });
+    };
+
+    // ----------------------------------------------------
+    // RECALIBRATE OPENING STOCK
+    // ----------------------------------------------------
+    window.recalibrateOpeningStock = async () => {
+      if (!rolesConfig[simulatedRole].canDeleteTxn) {
+        showToast("จำกัดสิทธิ์เฉพาะ Admin เท่านั้น", "error");
+        return;
+      }
+      
+      if (!confirm("คุณต้องการคำนวณ 'ยอดยกมา (Brought Forward)' ใหม่ทั้งหมด ให้ตรงกับยอดสต็อกพร้อมขายปัจจุบัน (Available Stock) ใช่หรือไม่?")) return;
+      
+      try {
+        showToast("กำลังคำนวณยอดยกมาใหม่... กรุณารอสักครู่", "info");
+        const batch = writeBatch(db);
+        const invSnapshot = await getDocs(getCollectionRef('inventory'));
+        
+        invSnapshot.docs.forEach(doc => {
+          const data = doc.data();
+          const current = parseInt(data.currentStock || 0);
+          const reserved = parseInt(data.reservedStock || 0);
+          const available = current - reserved;
+          
+          if (available >= 0) {
+            batch.update(doc.ref, { beginningStock: available });
+          }
+        });
+        
+        await batch.commit();
+        showToast("คำนวณยอดยกมาใหม่สำเร็จแล้ว! กำลังรีเฟรชหน้าเว็บ...", "success");
+        setTimeout(() => location.reload(), 1500);
+      } catch (error) {
+        console.error("Error recalibrating stock:", error);
+        showToast("พบปัญหาในการคำนวณ โปรดลองอีกครั้ง", "error");
+      }
     };
 
     // ----------------------------------------------------
