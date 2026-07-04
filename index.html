@@ -470,20 +470,59 @@
     <!-- TAB: PRODUCT CATALOG -->
     <div id="view-catalog" class="space-y-6 hidden">
       <div class="theme-card border rounded-2xl p-6 shadow-xl space-y-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 class="text-base font-bold theme-text">Solar Product Catalog</h2>
-            <p class="text-xs theme-text-muted">Configure Solar Panel Models, Brands, and Wattage Ratings</p>
+        
+        <!-- Sub-tabs for Products View -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b theme-border pb-4">
+          <div class="flex gap-2">
+            <button onclick="switchCatalogSubTab('summary')" id="subtab-summary" class="px-4 py-2 rounded-lg text-sm font-bold bg-brandGreen text-slate-950 transition-all shadow-md">
+              <i class="fa-solid fa-table-list"></i> Stock Summary
+            </button>
+            <button onclick="switchCatalogSubTab('setup')" id="subtab-setup" class="px-4 py-2 rounded-lg text-sm font-bold theme-text-muted hover:text-white transition-all">
+              <i class="fa-solid fa-gear"></i> Catalog Setup
+            </button>
           </div>
           <div class="flex items-center gap-2 w-full sm:w-auto">
-            <select id="catalogWarehouseFilter" onchange="renderProductsTable()" class="theme-inner border theme-border rounded text-xs p-2 theme-text w-full sm:w-auto focus:outline-none focus:ring-1 focus:ring-brandGreen">
+            <select id="catalogWarehouseFilter" onchange="renderProductsTable(); renderSummaryTable();" class="theme-inner border theme-border rounded text-xs p-2 theme-text w-full sm:w-auto focus:outline-none focus:ring-1 focus:ring-brandGreen">
               <option value="ALL">All Warehouses</option>
             </select>
-            <button id="addProductBtn" onclick="openProductModal()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap">
+            <button id="addProductBtn" onclick="openProductModal()" class="bg-brandGreen hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap hidden">
               <i class="fa-solid fa-plus"></i> Add New Product
             </button>
           </div>
         </div>
+
+        <!-- SUMMARY VIEW -->
+        <div id="catalog-summary-view" class="space-y-4">
+          <div>
+            <h2 class="text-base font-bold theme-text">Stock Summary</h2>
+            <p class="text-xs theme-text-muted">Overview of Current Stock Balances</p>
+          </div>
+          <div class="overflow-x-auto border theme-border rounded-xl">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="theme-inner border-b theme-border theme-text-muted text-[10px] font-extrabold uppercase tracking-wider">
+                  <th class="py-3 px-4">ชื่อสินค้า (PRODUCT NAME)</th>
+                  <th class="py-3 px-4">หมวดหมู่</th>
+                  <th class="py-3 px-4 text-center">ยกมา (B/F)</th>
+                  <th class="py-3 px-4 text-center text-brandGreen">นำเข้า (+)</th>
+                  <th class="py-3 px-4 text-center text-brandRed">จ่ายออก (-)</th>
+                  <th class="py-3 px-4 text-center text-brandBlue">คงเหลือ (BALANCE)</th>
+                  <th class="py-3 px-4 text-center">สถานะสต็อก</th>
+                </tr>
+              </thead>
+              <tbody id="summaryTableBody" class="text-xs divide-y divide-slate-800">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SETUP VIEW (Existing Catalog) -->
+        <div id="catalog-setup-view" class="space-y-4 hidden">
+          <div>
+            <h2 class="text-base font-bold theme-text">Solar Product Catalog</h2>
+            <p class="text-xs theme-text-muted">Configure Solar Panel Models, Brands, and Wattage Ratings</p>
+          </div>
 
         <div class="overflow-x-auto border theme-border rounded-xl">
           <table class="w-full text-left border-collapse">
@@ -504,6 +543,8 @@
             </tbody>
           </table>
         </div>
+        </div> <!-- End of SETUP VIEW -->
+
       </div>
     </div>
 
@@ -1128,6 +1169,7 @@
           inventory[doc.id] = doc.data();
         });
         renderDashboard();
+        if (typeof window.renderSummaryTable === 'function') window.renderSummaryTable();
       }, (err) => {
         console.error("Error reading live inventory:", err);
       });
@@ -1145,6 +1187,7 @@
         renderDailyTransactions();
         renderDashboard();
         applyHistoryFilters();
+        if (typeof window.renderSummaryTable === 'function') window.renderSummaryTable();
       }, (err) => {
         console.error("Error reading transactions:", err);
       });
@@ -2278,7 +2321,15 @@
 
       const filterWh = document.getElementById('catalogWarehouseFilter')?.value || 'ALL';
       
-      const filteredProducts = products.filter(p => filterWh === 'ALL' || p.warehouseId === filterWh);
+      const filteredProducts = products.filter(p => filterWh === 'ALL' || p.warehouseId === filterWh)
+        .sort((a, b) => {
+          const whA = warehouses.find(w => w.id === a.warehouseId);
+          const whB = warehouses.find(w => w.id === b.warehouseId);
+          const orderA = whA ? (parseInt(whA.order) || 0) : 999;
+          const orderB = whB ? (parseInt(whB.order) || 0) : 999;
+          if (orderA !== orderB) return orderA - orderB;
+          return (parseInt(a.order) || 0) - (parseInt(b.order) || 0);
+        });
 
       filteredProducts.forEach(p => {
         const canManage = rolesConfig[simulatedRole].canManageProducts;
@@ -2304,6 +2355,103 @@
           <td class="py-3.5 px-4 theme-text">${p.model}</td>
           <td class="py-3.5 px-4 theme-text-muted font-mono font-bold">${p.wattage > 0 ? p.wattage + ' W' : '-'}</td>
           <td class="py-3.5 px-4 text-center whitespace-nowrap">${actions}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      if (typeof window.renderSummaryTable === 'function') window.renderSummaryTable();
+    };
+
+    window.switchCatalogSubTab = (tabId) => {
+      document.getElementById('subtab-summary').className = tabId === 'summary' 
+        ? "px-4 py-2 rounded-lg text-sm font-bold bg-brandGreen text-slate-950 transition-all shadow-md"
+        : "px-4 py-2 rounded-lg text-sm font-bold theme-text-muted hover:text-white transition-all";
+        
+      document.getElementById('subtab-setup').className = tabId === 'setup' 
+        ? "px-4 py-2 rounded-lg text-sm font-bold bg-brandGreen text-slate-950 transition-all shadow-md"
+        : "px-4 py-2 rounded-lg text-sm font-bold theme-text-muted hover:text-white transition-all";
+
+      document.getElementById('catalog-summary-view').classList.toggle('hidden', tabId !== 'summary');
+      document.getElementById('catalog-setup-view').classList.toggle('hidden', tabId !== 'setup');
+      
+      const addBtn = document.getElementById('addProductBtn');
+      if (addBtn) {
+        if (tabId === 'setup') addBtn.classList.remove('hidden');
+        else addBtn.classList.add('hidden');
+      }
+
+      if (tabId === 'summary') {
+        renderSummaryTable();
+      } else {
+        renderProductsTable();
+      }
+    };
+
+    window.renderSummaryTable = () => {
+      const tbody = document.getElementById('summaryTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const filterWh = document.getElementById('catalogWarehouseFilter')?.value || 'ALL';
+      
+      const filteredProducts = products.filter(p => filterWh === 'ALL' || p.warehouseId === filterWh)
+        .sort((a, b) => {
+          const whA = warehouses.find(w => w.id === a.warehouseId);
+          const whB = warehouses.find(w => w.id === b.warehouseId);
+          const orderA = whA ? (parseInt(whA.order) || 0) : 999;
+          const orderB = whB ? (parseInt(whB.order) || 0) : 999;
+          if (orderA !== orderB) return orderA - orderB;
+          return (parseInt(a.order) || 0) - (parseInt(b.order) || 0);
+        });
+
+      // Aggregate transactions globally
+      const prodStats = {};
+      filteredProducts.forEach(p => {
+        const key = `${p.warehouseId}_${p.id}`;
+        prodStats[key] = { stockIn: 0, stockOut: 0 };
+      });
+
+      // Get the current month prefix (YYYY-MM)
+      const today = new Date();
+      const currentMonthPrefix = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+
+      transactions.forEach(t => {
+        // Only include transactions from the current month
+        if (t.status !== 'Cancelled' && t.date.startsWith(currentMonthPrefix)) {
+          const key = `${t.warehouseId}_${t.productId}`;
+          if (prodStats[key]) {
+            if (t.actionType === 'IN' || t.actionType === 'EXTERNAL') {
+              prodStats[key].stockIn += parseInt(t.quantity || 0);
+            } else if (t.actionType === 'OUT') {
+              prodStats[key].stockOut += parseInt(t.quantity || 0);
+            }
+          }
+        }
+      });
+
+      filteredProducts.forEach(p => {
+        const key = `${p.warehouseId}_${p.id}`;
+        const item = inventory[key] || { beginningStock: 0, currentStock: 0 };
+        const stats = prodStats[key];
+        
+        let statusBadge = '';
+        if (item.currentStock <= 0) {
+           statusBadge = `<span class="bg-brandRed/20 text-brandRed px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandRed/30">หมดสต็อก</span>`;
+        } else if (item.currentStock <= 5) {
+           statusBadge = `<span class="bg-brandOrange/20 text-brandOrange px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandOrange/30">ใกล้หมด</span>`;
+        } else {
+           statusBadge = `<span class="bg-brandGreen/20 text-brandGreen px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandGreen/30">ปกติ</span>`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-900/10 border-b theme-border";
+        tr.innerHTML = `
+          <td class="py-3.5 px-4 theme-text font-bold">${p.code || p.model}</td>
+          <td class="py-3.5 px-4 theme-text-muted font-medium">${p.category || 'Solar Panel'}</td>
+          <td class="py-3.5 px-4 text-center font-mono font-bold text-slate-300">${item.beginningStock || 0}</td>
+          <td class="py-3.5 px-4 text-center font-mono font-bold text-brandGreen">${stats.stockIn > 0 ? '+' + stats.stockIn : '-'}</td>
+          <td class="py-3.5 px-4 text-center font-mono font-bold text-brandRed">${stats.stockOut > 0 ? '-' + stats.stockOut : '-'}</td>
+          <td class="py-3.5 px-4 text-center font-mono font-extrabold text-brandBlue">${item.currentStock || 0}</td>
+          <td class="py-3.5 px-4 text-center">${statusBadge}</td>
         `;
         tbody.appendChild(tr);
       });
