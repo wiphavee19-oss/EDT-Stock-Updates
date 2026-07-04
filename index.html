@@ -2435,11 +2435,11 @@
         
         let statusBadge = '';
         if (item.currentStock <= 0) {
-           statusBadge = `<span class="bg-brandRed/20 text-brandRed px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandRed/30">หมดสต็อก</span>`;
+           statusBadge = `<span class="bg-brandRed/20 text-brandRed px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandRed/30 whitespace-nowrap">หมดสต็อก</span>`;
         } else if (item.currentStock <= 5) {
-           statusBadge = `<span class="bg-brandOrange/20 text-brandOrange px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandOrange/30">ใกล้หมด</span>`;
+           statusBadge = `<span class="bg-brandOrange/20 text-brandOrange px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandOrange/30 whitespace-nowrap">ใกล้หมด</span>`;
         } else {
-           statusBadge = `<span class="bg-brandGreen/20 text-brandGreen px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandGreen/30">ปกติ</span>`;
+           statusBadge = `<span class="bg-brandGreen/20 text-brandGreen px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandGreen/30 whitespace-nowrap">ปกติ</span>`;
         }
 
         const tr = document.createElement('tr');
@@ -2451,7 +2451,7 @@
           <td class="py-3.5 px-4 text-center font-mono font-bold text-brandGreen">${stats.stockIn > 0 ? '+' + stats.stockIn : '-'}</td>
           <td class="py-3.5 px-4 text-center font-mono font-bold text-brandRed">${stats.stockOut > 0 ? '-' + stats.stockOut : '-'}</td>
           <td class="py-3.5 px-4 text-center font-mono font-extrabold text-brandBlue">${item.currentStock || 0}</td>
-          <td class="py-3.5 px-4 text-center">${statusBadge}</td>
+          <td class="py-3.5 px-4 text-center whitespace-nowrap">${statusBadge}</td>
         `;
         tbody.appendChild(tr);
       });
