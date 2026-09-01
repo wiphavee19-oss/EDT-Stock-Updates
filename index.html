@@ -271,7 +271,7 @@
             <span class="text-xs theme-text-muted font-medium">Pcs.</span>
           </div>
           <p class="text-xs theme-text-muted mt-1 flex items-center gap-1">
-            <i class="fa-solid fa-circle-check"></i> นำเข้าและภายนอกรวมกันของวันนี้
+            <i class="fa-solid fa-circle-check"></i> นำเข้าและภายนอกรวมกันของเดือนนี้
           </p>
         </div>
 
@@ -286,7 +286,7 @@
             <span class="text-xs theme-text-muted font-medium">Pcs.</span>
           </div>
           <p class="text-xs theme-text-muted mt-1 flex items-center gap-1">
-            <i class="fa-solid fa-truck-ramp-box"></i> สินค้าที่ส่งออกวันนี้
+            <i class="fa-solid fa-truck-ramp-box"></i> สินค้าที่ส่งออกเดือนนี้
           </p>
         </div>
 
@@ -301,7 +301,7 @@
             <span class="text-xs theme-text-muted font-medium">Pcs.</span>
           </div>
           <p class="text-xs theme-text-muted mt-1 flex items-center gap-1">
-            <i class="fa-solid fa-lock"></i> ล็อคไว้ให้ลูกค้ารอส่งมอบ
+            <i class="fa-solid fa-lock"></i> ล็อคไว้ให้ลูกค้ารอส่งมอบรอบเดือนนี้
           </p>
         </div>
       </div>
@@ -711,7 +711,8 @@
           <!-- DO / Reference Number -->
           <div>
             <label for="txnDo" id="labelTxnDo" class="block text-[10px] font-bold uppercase tracking-wider theme-text-muted mb-1"> DO No.</label>
-            <input type="text" id="txnDo" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น DO-998822">
+            <input type="text" id="txnDo" list="txnDoHistoryList" class="theme-inner border theme-border text-xs theme-text rounded-lg p-2.5 w-full focus:outline-none focus:ring-1 focus:ring-brandGreen" placeholder="เช่น 36DO-690142">
+            <datalist id="txnDoHistoryList"></datalist>
           </div>
 
           <!-- Responsible Person -->
@@ -1048,7 +1049,7 @@
           const reserved = parseInt(invData.reservedStock || 0);
           const availableStock = current - reserved;
           
-          if (availableStock >= 0) {
+          if (availableStock > 0) {
             const newTxnRef = doc(getCollectionRef('transactions'));
             batch.set(newTxnRef, {
               date: today.toISOString().split('T')[0],
@@ -1513,13 +1514,15 @@
     // ----------------------------------------------------
     // RENDER: DASHBOARD CARD TILES & AVAILABLE STOCK
     // ----------------------------------------------------
-    window.renderDashboard = () => {
-      const searchVal = document.getElementById('dashboardSearch').value.toLowerCase();
+    function renderDashboard() {
+      const searchVal = document.getElementById('dashboardSearch')?.value?.toLowerCase() || '';
       const stockContainer = document.getElementById('warehouseStockContainer');
       if (!stockContainer) return;
       stockContainer.innerHTML = '';
 
-      const todayStr = new Date().toISOString().split('T')[0];
+      const today = new Date();
+      const currentMonthPrefix = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+
       let stockInTodayCount = 0;
       let stockOutTodayCount = 0;
       let reservedTodayCount = 0;
@@ -1545,25 +1548,44 @@
         }
       });
 
+      // Set of DO numbers that already have an explicit OUT transaction to prevent double counting
+      const outDOs = new Set();
       transactions.forEach(t => {
-        if (t.date === todayStr && t.status !== 'Cancelled') {
+        if (t.status !== 'Cancelled' && t.date && t.date.startsWith(currentMonthPrefix) && t.actionType === 'OUT') {
+          if (t.doNumber && t.doNumber !== '-' && t.doNumber.trim() !== '') {
+            outDOs.add(`${t.warehouseId}_${t.productId}_${t.doNumber.trim()}`);
+          }
+        }
+      });
+
+      transactions.forEach(t => {
+        if (t.status !== 'Cancelled' && t.date && t.date.startsWith(currentMonthPrefix)) {
           const whObj = warehouses.find(w => w.id === t.warehouseId);
           if (whObj && !whObj.isHidden) {
             if (t.actionType === 'IN' || t.actionType === 'EXTERNAL') {
               stockInTodayCount += parseInt(t.quantity || 0);
             } else if (t.actionType === 'OUT') {
               stockOutTodayCount += parseInt(t.quantity || 0);
-            } else if (t.actionType === 'RESERVE') {
+            } else if (t.actionType === 'RESERVE' && (t.status === 'Delivered' || t.status === 'Completed')) {
+              const doKey = `${t.warehouseId}_${t.productId}_${(t.doNumber || '').trim()}`;
+              if (!t.doNumber || t.doNumber === '-' || !outDOs.has(doKey)) {
+                stockOutTodayCount += parseInt(t.quantity || 0);
+              }
+            } else if (t.actionType === 'RESERVE' && t.status === 'Reserved') {
               reservedTodayCount += parseInt(t.quantity || 0);
             }
           }
         }
       });
 
-      document.getElementById('kpi-beginning-stock').textContent = totalBeginningStock.toLocaleString();
-      document.getElementById('kpi-stock-in').textContent = stockInTodayCount.toLocaleString();
-      document.getElementById('kpi-stock-out').textContent = stockOutTodayCount.toLocaleString();
-      document.getElementById('kpi-reserved').textContent = reservedTodayCount.toLocaleString();
+      const kpiBeg = document.getElementById('kpi-beginning-stock');
+      if (kpiBeg) kpiBeg.textContent = totalBeginningStock.toLocaleString();
+      const kpiIn = document.getElementById('kpi-stock-in');
+      if (kpiIn) kpiIn.textContent = stockInTodayCount.toLocaleString();
+      const kpiOut = document.getElementById('kpi-stock-out');
+      if (kpiOut) kpiOut.textContent = stockOutTodayCount.toLocaleString();
+      const kpiRes = document.getElementById('kpi-reserved');
+      if (kpiRes) kpiRes.textContent = reservedTodayCount.toLocaleString();
 
       // กรองเอาโกดังที่ถูกตั้งค่าให้ซ่อน (isHidden: true) ออกไป ไม่นำมาแสดงใน Dashboard
       const visibleWarehouses = warehouses.filter(w => !w.isHidden);
@@ -1582,19 +1604,24 @@
                  p.code.toLowerCase().includes(searchVal);
         });
 
-        if (matchedProducts.length === 0 && searchVal !== '') return;
+        const availableProducts = matchedProducts.filter(p => {
+          const stats = whStock[p.id] || { currentStock: 0, reservedStock: 0 };
+          return (stats.currentStock - stats.reservedStock) > 0;
+        });
+
+        if (availableProducts.length === 0 && searchVal !== '') return;
 
         let whCardHtml = `
-          <div class="theme-card border rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-[1.01]">
-            <div class="theme-inner px-5 py-3.5 border-b theme-border flex justify-between items-center">
+          <div class="theme-card border rounded-2xl overflow-hidden shadow-lg flex flex-col" style="min-height: 480px; max-height: 640px;">
+            <div class="theme-inner px-5 py-3.5 border-b theme-border flex justify-between items-center shrink-0">
               <h4 class="text-sm font-extrabold theme-text flex items-center gap-2">
                 <i class="fa-solid fa-warehouse text-brandGreen"></i> ${wh.name}
               </h4>
               <span class="text-[10px] theme-text font-bold theme-card border theme-border px-2.5 py-1 rounded-full uppercase">
-                ${matchedProducts.length} items
+                ${availableProducts.length} items
               </span>
             </div>
-            <div class="p-4 space-y-5">
+            <div class="p-4 space-y-5 flex-grow custom-scrollbar" style="overflow-y: auto;">
         `;
 
         let activePanelRows = 0;
@@ -1606,7 +1633,7 @@
         ];
 
         categories.forEach(catGroup => {
-          const prodsInCat = matchedProducts.filter(p => (p.category || 'Solar Panel') === catGroup.key);
+          const prodsInCat = availableProducts.filter(p => (p.category || 'Solar Panel') === catGroup.key);
           
           if (prodsInCat.length > 0) {
             whCardHtml += `
@@ -1624,10 +1651,7 @@
               let badgeColor = 'text-brandGreen bg-brandGreen/10 border-brandGreen/20';
               let quantityText = `${availableStock} Available`;
               
-              if (availableStock <= 0) {
-                badgeColor = 'text-brandRed bg-brandRed/10 border-brandRed/20';
-                quantityText = `Out of Stock`;
-              } else if (prodStats.reservedStock > 0) {
+              if (prodStats.reservedStock > 0) {
                 badgeColor = 'text-brandOrange bg-brandOrange/10 border-brandOrange/20';
               }
 
@@ -1672,7 +1696,8 @@
         whCardHtml += `</div></div>`;
         stockContainer.innerHTML += whCardHtml;
       });
-    };
+    }
+    window.renderDashboard = renderDashboard;
 
     // ----------------------------------------------------
     // RENDER: LIVE DAILY TIMELINE
@@ -1771,6 +1796,51 @@
     // ----------------------------------------------------
     // POPUP TRANSACTION EVENT HANDLING
     // ----------------------------------------------------
+    window.generateNextDONumber = () => {
+      let maxVal = -1;
+      let maxPrefix = '36DO-';
+      let maxNumStr = '690100';
+
+      const historyList = document.getElementById('txnDoHistoryList');
+      if (historyList) historyList.innerHTML = '';
+
+      const uniqueDOs = new Set();
+
+      transactions.forEach(t => {
+        const doStr = (t.doNumber || '').trim();
+        if (!doStr || doStr === '-') return;
+        uniqueDOs.add(doStr);
+
+        const match = doStr.match(/^(.*?)(\d+)$/);
+        if (match) {
+          const prefix = match[1];
+          const numStr = match[2];
+          const numVal = parseInt(numStr, 10);
+          if (numVal > maxVal) {
+            maxVal = numVal;
+            maxPrefix = prefix;
+            maxNumStr = numStr;
+          }
+        }
+      });
+
+      if (historyList) {
+        Array.from(uniqueDOs).reverse().slice(0, 30).forEach(doVal => {
+          const opt = document.createElement('option');
+          opt.value = doVal;
+          historyList.appendChild(opt);
+        });
+      }
+
+      if (maxVal === -1) {
+        return '36DO-690101';
+      }
+
+      const nextVal = maxVal + 1;
+      const nextNumStr = String(nextVal).padStart(maxNumStr.length, '0');
+      return maxPrefix + nextNumStr;
+    };
+
     window.openUpdateModal = () => {
       const activeRole = rolesConfig[simulatedRole];
       if (activeRole.canCreateTxn.length === 0) {
@@ -1780,7 +1850,7 @@
 
       document.getElementById('txnQuantity').value = '';
       document.getElementById('txnCustomer').value = '';
-      document.getElementById('txnDo').value = '';
+      document.getElementById('txnDo').value = generateNextDONumber();
       document.getElementById('txnRemark').value = '';
       document.getElementById('txnResponsible').value = simulatedRole === 'Warehouse' ? 'Warehouse Operator' : 'Admin';
       
@@ -2314,7 +2384,7 @@
       }
     };
 
-    window.renderProductsTable = () => {
+    function renderProductsTable() {
       const tbody = document.getElementById('productsTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
@@ -2359,9 +2429,10 @@
         tbody.appendChild(tr);
       });
       if (typeof window.renderSummaryTable === 'function') window.renderSummaryTable();
-    };
+    }
+    window.renderProductsTable = renderProductsTable;
 
-    window.switchCatalogSubTab = (tabId) => {
+    function switchCatalogSubTab(tabId) {
       document.getElementById('subtab-summary').className = tabId === 'summary' 
         ? "px-4 py-2 rounded-lg text-sm font-bold bg-brandGreen text-slate-950 transition-all shadow-md"
         : "px-4 py-2 rounded-lg text-sm font-bold theme-text-muted hover:text-white transition-all";
@@ -2384,9 +2455,10 @@
       } else {
         renderProductsTable();
       }
-    };
+    }
+    window.switchCatalogSubTab = switchCatalogSubTab;
 
-    window.renderSummaryTable = () => {
+    function renderSummaryTable() {
       const tbody = document.getElementById('summaryTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
@@ -2414,15 +2486,30 @@
       const today = new Date();
       const currentMonthPrefix = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
 
+      // Set of DO numbers that already have an explicit OUT transaction to prevent double counting
+      const outDOs = new Set();
+      transactions.forEach(t => {
+        if (t.status !== 'Cancelled' && t.date && t.date.startsWith(currentMonthPrefix) && t.actionType === 'OUT') {
+          if (t.doNumber && t.doNumber !== '-' && t.doNumber.trim() !== '') {
+            outDOs.add(`${t.warehouseId}_${t.productId}_${t.doNumber.trim()}`);
+          }
+        }
+      });
+
       transactions.forEach(t => {
         // Only include transactions from the current month
-        if (t.status !== 'Cancelled' && t.date.startsWith(currentMonthPrefix)) {
+        if (t.status !== 'Cancelled' && t.date && t.date.startsWith(currentMonthPrefix)) {
           const key = `${t.warehouseId}_${t.productId}`;
           if (prodStats[key]) {
             if (t.actionType === 'IN' || t.actionType === 'EXTERNAL') {
               prodStats[key].stockIn += parseInt(t.quantity || 0);
             } else if (t.actionType === 'OUT') {
               prodStats[key].stockOut += parseInt(t.quantity || 0);
+            } else if (t.actionType === 'RESERVE' && (t.status === 'Delivered' || t.status === 'Completed')) {
+              const doKey = `${t.warehouseId}_${t.productId}_${(t.doNumber || '').trim()}`;
+              if (!t.doNumber || t.doNumber === '-' || !outDOs.has(doKey)) {
+                prodStats[key].stockOut += parseInt(t.quantity || 0);
+              }
             }
           }
         }
@@ -2430,13 +2517,27 @@
 
       filteredProducts.forEach(p => {
         const key = `${p.warehouseId}_${p.id}`;
-        const item = inventory[key] || { beginningStock: 0, currentStock: 0 };
-        const stats = prodStats[key];
+        let item = inventory[key];
+        
+        if (!item && p.warehouseId) {
+          const invKey = Object.keys(inventory).find(k => {
+            const invDoc = inventory[k];
+            return invDoc && invDoc.productId === p.id && invDoc.warehouseId === p.warehouseId;
+          });
+          if (invKey) item = inventory[invKey];
+        }
+
+        if (!item) {
+          item = { beginningStock: 0, currentStock: 0, reservedStock: 0 };
+        }
+
+        const stats = prodStats[key] || { stockIn: 0, stockOut: 0 };
+        const availableStock = (parseInt(item.currentStock || 0)) - (parseInt(item.reservedStock || 0));
         
         let statusBadge = '';
-        if (item.currentStock <= 0) {
+        if (availableStock <= 0) {
            statusBadge = `<span class="bg-brandRed/20 text-brandRed px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandRed/30 whitespace-nowrap">หมดสต็อก</span>`;
-        } else if (item.currentStock <= 5) {
+        } else if (availableStock <= 5) {
            statusBadge = `<span class="bg-brandOrange/20 text-brandOrange px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandOrange/30 whitespace-nowrap">ใกล้หมด</span>`;
         } else {
            statusBadge = `<span class="bg-brandGreen/20 text-brandGreen px-2.5 py-1 rounded-full text-[10px] font-bold border border-brandGreen/30 whitespace-nowrap">ปกติ</span>`;
@@ -2455,7 +2556,8 @@
         `;
         tbody.appendChild(tr);
       });
-    };
+    }
+    window.renderSummaryTable = renderSummaryTable;
 
     // ----------------------------------------------------
     // CRUD: MASTER WAREHOUSES REGISTRY
